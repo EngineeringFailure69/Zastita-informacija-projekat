@@ -1,20 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace Encryption_Exchange_App
+﻿namespace Encryption_Exchange_App
 {
     public partial class MainForm : Form
     {
+        public bool IsFSWEnabled = false;
+
         public MainForm()
         {
             InitializeComponent();
+            LoadUserControl(new UCMain());
         }
         private void LoadUserControl(UserControl uc)
         {
@@ -40,7 +33,7 @@ namespace Encryption_Exchange_App
 
         private void FSWSettingsToolStripMenuItem2_Click(object sender, EventArgs e)
         {
-            LoadUserControl(new UCFSW());
+            LoadUserControl(new UCFSW(this));
         }
     }
 }
