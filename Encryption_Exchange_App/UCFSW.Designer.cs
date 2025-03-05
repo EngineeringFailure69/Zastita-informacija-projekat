@@ -39,6 +39,7 @@
             cbRenaming = new CheckBox();
             cbDataChange = new CheckBox();
             groupBox1 = new GroupBox();
+            label2 = new Label();
             gbFilesInTheDirectory.SuspendLayout();
             groupBox1.SuspendLayout();
             SuspendLayout();
@@ -68,9 +69,9 @@
             lblStatus.AutoSize = true;
             lblStatus.Location = new Point(99, 52);
             lblStatus.Name = "lblStatus";
-            lblStatus.Size = new Size(50, 20);
+            lblStatus.Size = new Size(56, 20);
             lblStatus.TabIndex = 2;
-            lblStatus.Text = "label2";
+            lblStatus.Text = "status...";
             // 
             // lvCurrentFiles
             // 
@@ -109,6 +110,7 @@
             cbCreating.TabIndex = 7;
             cbCreating.Text = "Creating";
             cbCreating.UseVisualStyleBackColor = true;
+            cbCreating.CheckedChanged += cbCreating_CheckedChanged;
             // 
             // cbDeleting
             // 
@@ -119,6 +121,7 @@
             cbDeleting.TabIndex = 8;
             cbDeleting.Text = "Deleting";
             cbDeleting.UseVisualStyleBackColor = true;
+            cbDeleting.CheckedChanged += cbDeleting_CheckedChanged;
             // 
             // cbRenaming
             // 
@@ -129,6 +132,7 @@
             cbRenaming.TabIndex = 9;
             cbRenaming.Text = "Renaming";
             cbRenaming.UseVisualStyleBackColor = true;
+            cbRenaming.CheckedChanged += cbRenaming_CheckedChanged;
             // 
             // cbDataChange
             // 
@@ -156,19 +160,31 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "Tracking";
             // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(9, 121);
+            label2.Name = "label2";
+            label2.Size = new Size(50, 20);
+            label2.TabIndex = 12;
+            label2.Text = "label2";
+            // 
             // UCFSW
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(label2);
             Controls.Add(groupBox1);
             Controls.Add(btnUploadDirectory);
             Controls.Add(gbFilesInTheDirectory);
             Name = "UCFSW";
             Size = new Size(776, 407);
+            VisibleChanged += UCFSW_VisibleChanged_1;
             gbFilesInTheDirectory.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -184,5 +200,6 @@
         private CheckBox cbRenaming;
         private CheckBox cbDataChange;
         private GroupBox groupBox1;
+        private Label label2;
     }
 }
