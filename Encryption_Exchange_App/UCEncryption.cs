@@ -1,19 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace Encryption_Exchange_App
+﻿namespace Encryption_Exchange_App
 {
     public partial class UCEncryption : UserControl
     {
-        public UCEncryption()
+        private MainForm mainForm;
+        public UCEncryption(MainForm mainForm)
         {
+            this.mainForm = mainForm;
             InitializeComponent();
         }
     }

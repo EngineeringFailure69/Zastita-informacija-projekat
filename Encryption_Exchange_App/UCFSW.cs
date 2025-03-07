@@ -16,6 +16,7 @@
             filesToUpload = new Queue<string>();
             //proxy = new ServiceReference1.Service1Client();
             cbEnableDisable.Checked = mainForm.IsFSWEnabled;
+            cbCreating.Checked = mainForm.IsCreatingChecked;
             lblStatus.Text = "";
             lblStatus.Enabled = false;
             label1.Enabled = false;
@@ -32,7 +33,7 @@
             Refresh();
         }
 
-        private void Refresh()
+        public void Refresh()
         {
             cbEnableDisable.Checked = mainForm.IsFSWEnabled;
 
@@ -55,7 +56,7 @@
                 lvCurrentFiles.Items.Clear();
             }
         }
-        private void CopyQueue()
+        public void CopyQueue()
         {
             Queue<string> updatedQueue = new Queue<string>();
 
@@ -68,7 +69,6 @@
             filesToUpload = updatedQueue;
             ShowQueue();
         }
-
         private void SetWatcher()
         {
             watcher.Path = folderFSWPath;
@@ -111,7 +111,7 @@
         {
             if (!this.IsHandleCreated)
             {
-                return; // Izlazi iz funkcije ako kontrola još nije kreirana
+                return; // Izlazi iz funkcije ako kontrola jos nije kreirana
             }
 
             if (this.InvokeRequired)
@@ -141,6 +141,8 @@
             }
             filesToUpload.Enqueue(e.FullPath);
             ShowQueue();
+
+            mainForm.ReceiveNewFile(e.FullPath);
         }
         private void Watcher_ChangedFileName(object sender, RenamedEventArgs e)
         {
@@ -203,7 +205,6 @@
             }
             return true;
         }
-
         private void cbEnableDisable_CheckedChanged(object sender, EventArgs e)
         {
             mainForm.IsFSWEnabled = cbEnableDisable.Checked;
@@ -234,7 +235,6 @@
                 EmptyQueue();
             }
         }
-
         private void btnUploadDirectory_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog ofd = new OpenFileDialog())
@@ -265,9 +265,9 @@
         private void UCFSW_VisibleChanged_1(object sender, EventArgs e)
         {
         }
-
         private void cbCreating_CheckedChanged(object sender, EventArgs e)
         {
+            mainForm.IsCreatingChecked = cbCreating.Checked;
             if (mainForm.IsFSWEnabled == true && cbEnableDisable.Checked == true && cbCreating.Checked == true)
             {
                 EmptyQueue();
@@ -278,7 +278,6 @@
                 watcher.Created -= Watcher_Created;
             }
         }
-
         private void cbDeleting_CheckedChanged(object sender, EventArgs e)
         {
             if (mainForm.IsFSWEnabled == true && cbEnableDisable.Checked == true && cbDeleting.Checked == true)
@@ -291,7 +290,6 @@
                 watcher.Deleted -= Watcher_Deleted;
             }
         }
-
         private void cbRenaming_CheckedChanged(object sender, EventArgs e)
         {
             if (mainForm.IsFSWEnabled == true && cbEnableDisable.Checked == true && cbRenaming.Checked == true)
