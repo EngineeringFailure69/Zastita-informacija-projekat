@@ -111,7 +111,7 @@
         {
             if (!this.IsHandleCreated)
             {
-                return; // Izlazi iz funkcije ako kontrola jos nije kreirana
+                return; // Izlazi iz funkcije ako kontrola još nije kreirana
             }
 
             if (this.InvokeRequired)

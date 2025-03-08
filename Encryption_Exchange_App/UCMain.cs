@@ -5,7 +5,8 @@
         private MainForm mainForm;
         #region Declarations
         string sentence, encrypted, decrypted;
-        private static string folderFSWPath = @"C:\Users\Windows\Desktop\X";
+        private static string folderFSWPath = @"C:\Users\Windows\Desktop\X\fajl.txt";
+        private static string folderFSWPath1 = @"C:\Users\Windows\Desktop\X\fajl1.txt";
         string alphabet = "abcdefghiklmnopqrstuvwxyz";
         //char[,] square;
         List<int> rows;
@@ -50,9 +51,13 @@
             }
             return square;
         }
-        public List<int> BifidEncrypt(string input, char[,] square)
+        public string BifidEncrypt(string input, char[,] square)
         {
             sentence = input;
+            rows.Clear();
+            cols.Clear();
+            code.Clear();
+            string encryptedText = string.Empty;
 
             int k = 0;
             while (k < sentence.Length)
@@ -116,12 +121,12 @@
             for (int i = 0; i < code.Count; i = i + 2)
             {
                 char letter = square[code[i], code[i + 1]];
-                encrypted += letter;
+                encryptedText += letter;
             }
 
-            return code;
+           return encryptedText;
         }
-        public string BifidDecrypt(string input, char[,] square)
+        public string BifidDecrypt(List<int> code, char[,] square)
         {
             decrypted = string.Empty;
             List<int> decRows = new List<int>();
@@ -154,7 +159,7 @@
                 checkLength -= 10;
             }
 
-            for (int i = 0; i < Count / 2; i++)
+            for (int i = 0; i < Count/2; i++)
             {
                 char letter = square[decRows[i], decCols[i]];
                 decrypted += letter;
@@ -162,38 +167,79 @@
 
             return decrypted;
         }
-        public void BifidEncryptFile(string inputFile)
+        public string BifidEncryptFile(string inputFile)
         {
-            byte[] fileBytes = File.ReadAllBytes(inputFile); 
-            string base64 = Convert.ToBase64String(fileBytes);
+            string fileContent = string.Empty;
+            string extension = Path.GetExtension(inputFile);
+            if (extension == ".txt" || extension == ".html") //ako je fajl txt
+            {
+                fileContent = File.ReadAllText(inputFile);
+            }
+            else //ako nije txt
+            {
+                MessageBox.Show($"Fajl {inputFile} ne moze biti sifrovan jer nije .txt fajl");
+                return null;
+            }
+            char[,] square = generateSquare();
 
-            char[,] square = generateSquare(); 
+            string encryptedText = BifidEncrypt(fileContent, square);
 
-            List<int> encrypted = BifidEncrypt(base64, square);
 
             string squareString = ConvertSquareToString(square);
-            string outputFile = folderFSWPath + ".bifid";
-            File.WriteAllText(outputFile, squareString + Environment.NewLine + encrypted); 
+            string encryptedIndices = string.Empty; 
+            foreach (var number in code)
+            {
+                encryptedIndices += number;
+            }
+
+            string outputFile = folderFSWPath;
+            File.WriteAllText(outputFile, squareString + Environment.NewLine + encryptedIndices + Environment.NewLine + encryptedText); // Sačuvaj kvadrat pre šifrovanog teksta
 
             MessageBox.Show($"Fajl {inputFile} je šifrovan kao {outputFile}");
+            return outputFile;
         }
         public void BifidDecryptFile(string encryptedFile)
         {
-            string[] fileContent = File.ReadAllLines(encryptedFile); 
-            string squareString = fileContent[0]; 
-            string encryptedText = fileContent[1];
+            try
+            {
+                string[] fileContent = File.ReadAllLines(encryptedFile);
 
-            char[,] square = ConvertStringToSquare(squareString);
+                string squareString = fileContent[0];
+                string encryptedIndices = fileContent[1];
 
-            string decryptedBase64 = BifidDecrypt(encryptedText, square);
+                char[,] square = ConvertStringToSquare(squareString);
+                List<int> code = new List<int>();
 
-            byte[] fileBytes = Convert.FromBase64String(decryptedBase64);
+                for (int i = 0; i < encryptedIndices.Length; i += 1)
+                {
+                    string numStr = encryptedIndices.Substring(i, 1);
+                    if (int.TryParse(numStr, out int number))
+                    {
+                        code.Add(number);
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Neispravan broj u šifrovanom indeksu: {numStr}", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                }
 
-            string outputFile = encryptedFile.Replace(".bifid", "");
+                string decryptedText = BifidDecrypt(code, square);
 
-            File.WriteAllBytes(outputFile, fileBytes);
+                string outputFolder = Path.GetDirectoryName(folderFSWPath1);
+                if (!Directory.Exists(outputFolder))
+                {
+                    Directory.CreateDirectory(outputFolder);
+                }
 
-            MessageBox.Show($"Fajl {outputFile} je uspešno dešifrovan!");
+                File.WriteAllText(folderFSWPath1, decryptedText);
+
+                MessageBox.Show($"Fajl {folderFSWPath1} je uspešno dešifrovan!");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Došlo je do greške: {ex.Message}\n{ex.StackTrace}", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
         private char[,] ConvertStringToSquare(string squareString)
         {
@@ -207,6 +253,22 @@
                 }
             }
             return square;
+        }
+        public void PrintSquare(char[,] square)
+        {
+            int size = square.GetLength(0);
+            string output = "Kvadrat:\n";
+
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    output += square[i, j] + " ";
+                }
+                output += "\n";
+            }
+
+            MessageBox.Show(output, "Provera kvadrata");
         }
         private string ConvertSquareToString(char[,] square)
         {
@@ -237,8 +299,10 @@
         public void HandleNewFile(string filePath) 
         {
             MessageBox.Show($"New file detected, path to it: {filePath}");
-            BifidEncryptFile(filePath);
 
+            string decryptPath = BifidEncryptFile(filePath); 
+            MessageBox.Show($"New file to decrypt: {decryptPath}");
+            BifidDecryptFile(decryptPath);
         }
         private void button1_Click(object sender, EventArgs e)
         {
