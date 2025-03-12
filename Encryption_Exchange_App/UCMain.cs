@@ -3,7 +3,7 @@
     public partial class UCMain : UserControl
     {
         private MainForm mainForm;
-        #region Declarations
+        #region BifidDeclarations
         string sentence, encrypted, decrypted;
         private static string folderFSWPath = @"C:\Users\Windows\Desktop\X\fajl.txt";
         private static string folderFSWPath1 = @"C:\Users\Windows\Desktop\X\fajl1.txt";
@@ -15,8 +15,15 @@
         List<char> letters;
         //Random rand;
         #endregion
+        #region RC6Declarations
+        private const int w = 32; // Veličina reči u bitima
+        private const int r = 20; // Broj rundi
+        private static readonly uint P32 = 0xB7E15163;
+        private static readonly uint Q32 = 0x9E3779B9;
+        #endregion
         public UCMain(MainForm mainForm)
         {
+            #region BifidInitialization
             sentence = string.Empty;
             decrypted = string.Empty;
             encrypted = string.Empty;
@@ -27,10 +34,11 @@
             cols = new List<int>();
             code = new List<int>();
             //square = new char[5, 5];
+            #endregion
             InitializeComponent();
             this.mainForm = mainForm;
         }
-
+        #region BifidEnkripcija/Dekripcija
         public char[,] generateSquare() 
         {
             letters = new List<char>(alphabet);
@@ -296,6 +304,125 @@
 
         //    square = new char[5, 5];
         //}
+        #endregion
+
+        #region RC6Enkripcija/Dekripcija
+        byte[] GenerateKeyAndIV(int length)
+        {
+            byte[] randomBytes = new byte[length];
+            using (RandomNumberGenerator rndng = RandomNumberGenerator.Create())
+            {
+                rndng.GetBytes(randomBytes);
+            }
+            return randomBytes;
+        }
+        uint[] KeyExpansion(byte[] key)
+        {
+            int c = (int)Math.Ceiling(key.Length / 4.0); 
+            uint[] L = new uint[c];
+            Array.Clear(L, 0, L.Length); 
+
+            for (int i = 0; i < key.Length / 4; i++)
+                L[i] = BitConverter.ToUInt32(key, i * 4);
+
+            uint[] S = new uint[2 * r + 4];
+            S[0] = P32;
+            for (int i = 1; i < S.Length; i++)
+                S[i] = S[i - 1] + Q32;
+
+            uint A = 0, B = 0;
+            int iIndex = 0, jIndex = 0;
+            int loops = 3 * Math.Max(S.Length, L.Length);
+
+            for (int k = 0; k < loops; k++)
+            {
+                S[iIndex] = RotateLeft(S[iIndex] + A + B, 3);
+                A = S[iIndex];
+                iIndex = (iIndex + 1) % S.Length;
+
+                L[jIndex] = RotateLeft(L[jIndex] + A + B, (int)((A + B) & 31));
+                B = L[jIndex];
+                jIndex = (jIndex + 1) % L.Length;
+            }
+            return S;
+        }
+        byte[] RC6EncryptIV(byte[] block, uint[] S)
+        {
+            if (block.Length != 16)
+                throw new ArgumentException("Block mora biti tačno 16 bajtova!");
+
+            uint A = BitConverter.ToUInt32(block, 0);
+            uint B = BitConverter.ToUInt32(block, 4);
+            uint C = BitConverter.ToUInt32(block, 8);
+            uint D = BitConverter.ToUInt32(block, 12);
+
+            B += S[0];
+            D += S[1];
+
+            for (int i = 1; i <= r; i++)  
+            {
+                uint t = RotateLeft(B * (2 * B + 1), 5);
+                uint u = RotateLeft(D * (2 * D + 1), 5);
+
+                A = RotateLeft(A ^ t, (int)(u & 31)) + S[2 * i];
+                C = RotateLeft(C ^ u, (int)(t & 31)) + S[2 * i + 1];
+
+                uint temp = A;
+                A = B;
+                B = C;
+                C = D;
+                D = temp;
+            }
+
+            A += S[2 * r + 2];
+            C += S[2 * r + 3];
+
+            byte[] encryptedBlock = new byte[16];
+            Array.Copy(BitConverter.GetBytes(A), 0, encryptedBlock, 0, 4);
+            Array.Copy(BitConverter.GetBytes(B), 0, encryptedBlock, 4, 4);
+            Array.Copy(BitConverter.GetBytes(C), 0, encryptedBlock, 8, 4);
+            Array.Copy(BitConverter.GetBytes(D), 0, encryptedBlock, 12, 4);
+
+            return encryptedBlock;
+        }
+        uint RotateLeft(uint value, int shift)
+        {
+            shift = shift & 31;
+            return (value << shift) | (value >> (32 - shift));
+        }
+        byte[] GenerateKeystream(byte[] IV, int length, uint[] S)
+        {
+            byte[] keystream = new byte[length];
+            byte[] currentBlock = IV;
+
+            for (int i = 0; i < length; i += 16)
+            {
+                currentBlock = RC6EncryptIV(currentBlock, S);
+                Array.Copy(currentBlock, 0, keystream, i, Math.Min(16, length - i));
+            }
+            return keystream;
+        }
+        byte[] Encrypt(byte[] plaintext, byte[] IV, uint[] S)
+        {
+            byte[] keystream = GenerateKeystream(IV, plaintext.Length, S);
+            byte[] ciphertext = new byte[plaintext.Length];
+
+            for (int i = 0; i < plaintext.Length; i++)
+                ciphertext[i] = (byte)(plaintext[i] ^ keystream[i]);
+
+            return ciphertext;
+        }
+        byte[] Decrypt(byte[] ciphertext, byte[] IV, uint[] S)
+        {
+            byte[] keystream = GenerateKeystream(IV, ciphertext.Length, S);
+            byte[] decryptedText = new byte[ciphertext.Length];
+
+            for (int i = 0; i < ciphertext.Length; i++)
+                decryptedText[i] = (byte)(ciphertext[i] ^ keystream[i]);
+
+            return decryptedText;
+        }
+        #endregion
         public void HandleNewFile(string filePath) 
         {
             MessageBox.Show($"New file detected, path to it: {filePath}");
@@ -306,9 +433,18 @@
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            //BifidEncrypt();
-            //BifidDecrypt();
-            //ResetData();
+            int length = 16;
+            byte[] key = GenerateKeyAndIV(length);
+            byte[] IV = GenerateKeyAndIV(length);
+
+            uint[] expandedKey = KeyExpansion(key);
+            byte[] encryptedIV = RC6EncryptIV(IV, expandedKey);
+
+            byte[] plaintext = Encoding.UTF8.GetBytes(textBox1.Text);
+            byte[] ciphertext = Encrypt(plaintext, encryptedIV, expandedKey);
+            textBox2.Text = BitConverter.ToString(ciphertext).Replace("-", "");
+            byte[] decryptedText = Decrypt(ciphertext, encryptedIV, expandedKey);
+            textBox3.Text = Encoding.UTF8.GetString(decryptedText);
         }
     }
 }
