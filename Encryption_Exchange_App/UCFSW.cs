@@ -79,7 +79,7 @@
                 watcher.Renamed -= Watcher_ChangedFileName;
                 watcher.Deleted -= Watcher_Deleted;
 
-                if (cbCreating.Checked == true) 
+                if (cbCreating.Checked == true)
                     watcher.Created += Watcher_Created;
                 if (cbRenaming.Checked == true)
                     watcher.Renamed += Watcher_ChangedFileName;
@@ -301,6 +301,35 @@
             {
                 watcher.Renamed -= Watcher_ChangedFileName;
             }
+        }
+        private void btnSelectFileToEncrypt_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "All files (*.*)|*.*";
+                ofd.Title = "Select a file from the directory";
+                ofd.CheckFileExists = true;
+                ofd.FileName = "Select Folder";
+                EmptyQueue();
+
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    string selectedFile = ofd.FileName;
+                    label2.Text = selectedFile;
+
+                    if (mainForm.IsFSWEnabled == false && cbEnableDisable.Checked == false)
+                    {
+                        lvCurrentFiles.Items.Clear();
+                        SetWatcher();
+                        mainForm.ReceiveNewFile(selectedFile);
+                    }
+                    else 
+                    {
+                        MessageBox.Show("FSW mora biti iskljucen");
+                    }
+                }
+            }
+
         }
     }
 }

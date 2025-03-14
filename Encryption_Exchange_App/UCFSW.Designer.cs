@@ -40,6 +40,7 @@
             cbDataChange = new CheckBox();
             groupBox1 = new GroupBox();
             label2 = new Label();
+            btnSelectFileToEncrypt = new Button();
             gbFilesInTheDirectory.SuspendLayout();
             groupBox1.SuspendLayout();
             SuspendLayout();
@@ -169,10 +170,21 @@
             label2.TabIndex = 12;
             label2.Text = "label2";
             // 
+            // btnSelectFileToEncrypt
+            // 
+            btnSelectFileToEncrypt.Location = new Point(118, 227);
+            btnSelectFileToEncrypt.Name = "btnSelectFileToEncrypt";
+            btnSelectFileToEncrypt.Size = new Size(163, 29);
+            btnSelectFileToEncrypt.TabIndex = 13;
+            btnSelectFileToEncrypt.Text = "Select file to encrypt";
+            btnSelectFileToEncrypt.UseVisualStyleBackColor = true;
+            btnSelectFileToEncrypt.Click += btnSelectFileToEncrypt_Click;
+            // 
             // UCFSW
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(btnSelectFileToEncrypt);
             Controls.Add(label2);
             Controls.Add(groupBox1);
             Controls.Add(btnUploadDirectory);
@@ -201,5 +213,6 @@
         private CheckBox cbDataChange;
         private GroupBox groupBox1;
         private Label label2;
+        private Button btnSelectFileToEncrypt;
     }
 }

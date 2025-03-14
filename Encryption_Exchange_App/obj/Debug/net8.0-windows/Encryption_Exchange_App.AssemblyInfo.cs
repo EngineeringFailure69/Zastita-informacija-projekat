@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Encryption_Exchange_App")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8ef3b4ee83ab0425a5b518609def8f28127d878e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dee5e11d57ae62082dd59a8169d5a6a85efd103b")]
 [assembly: System.Reflection.AssemblyProductAttribute("Encryption_Exchange_App")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Encryption_Exchange_App")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

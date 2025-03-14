@@ -3,10 +3,10 @@
     public partial class UCMain : UserControl
     {
         private MainForm mainForm;
+        private static string folderFSWPath = @"C:\Users\Windows\Desktop\X\";
+        private static string folderFSWPath1 = @"C:\Users\Windows\Desktop\X\";
         #region BifidDeclarations
         string sentence, encrypted, decrypted;
-        private static string folderFSWPath = @"C:\Users\Windows\Desktop\X\fajl.txt";
-        private static string folderFSWPath1 = @"C:\Users\Windows\Desktop\X\fajl1.txt";
         string alphabet = "abcdefghiklmnopqrstuvwxyz";
         //char[,] square;
         List<int> rows;
@@ -16,8 +16,8 @@
         //Random rand;
         #endregion
         #region RC6Declarations
-        private const int w = 32; // Veličina reči u bitima
-        private const int r = 20; // Broj rundi
+        private const int w = 32; 
+        private const int r = 20;
         private static readonly uint P32 = 0xB7E15163;
         private static readonly uint Q32 = 0x9E3779B9;
         #endregion
@@ -307,7 +307,7 @@
         #endregion
 
         #region RC6Enkripcija/Dekripcija
-        byte[] GenerateKeyAndIV(int length)
+        public byte[] GenerateKeyAndIV(int length)
         {
             byte[] randomBytes = new byte[length];
             using (RandomNumberGenerator rndng = RandomNumberGenerator.Create())
@@ -316,7 +316,7 @@
             }
             return randomBytes;
         }
-        uint[] KeyExpansion(byte[] key)
+        public uint[] KeyExpansion(byte[] key)
         {
             int c = (int)Math.Ceiling(key.Length / 4.0); 
             uint[] L = new uint[c];
@@ -346,7 +346,7 @@
             }
             return S;
         }
-        byte[] RC6EncryptIV(byte[] block, uint[] S)
+        public byte[] RC6EncryptIV(byte[] block, uint[] S)
         {
             if (block.Length != 16)
                 throw new ArgumentException("Block mora biti tačno 16 bajtova!");
@@ -359,7 +359,7 @@
             B += S[0];
             D += S[1];
 
-            for (int i = 1; i <= r; i++)  
+            for (int i = 1; i <= r; i++) 
             {
                 uint t = RotateLeft(B * (2 * B + 1), 5);
                 uint u = RotateLeft(D * (2 * D + 1), 5);
@@ -385,12 +385,12 @@
 
             return encryptedBlock;
         }
-        uint RotateLeft(uint value, int shift)
+        public uint RotateLeft(uint value, int shift)
         {
-            shift = shift & 31;
+            shift = shift & 31; 
             return (value << shift) | (value >> (32 - shift));
         }
-        byte[] GenerateKeystream(byte[] IV, int length, uint[] S)
+        public byte[] GenerateKeystream(byte[] IV, int length, uint[] S)
         {
             byte[] keystream = new byte[length];
             byte[] currentBlock = IV;
@@ -402,7 +402,7 @@
             }
             return keystream;
         }
-        byte[] Encrypt(byte[] plaintext, byte[] IV, uint[] S)
+        public byte[] Encrypt(byte[] plaintext, byte[] IV, uint[] S)
         {
             byte[] keystream = GenerateKeystream(IV, plaintext.Length, S);
             byte[] ciphertext = new byte[plaintext.Length];
@@ -412,7 +412,7 @@
 
             return ciphertext;
         }
-        byte[] Decrypt(byte[] ciphertext, byte[] IV, uint[] S)
+        public byte[] Decrypt(byte[] ciphertext, byte[] IV, uint[] S)
         {
             byte[] keystream = GenerateKeystream(IV, ciphertext.Length, S);
             byte[] decryptedText = new byte[ciphertext.Length];
@@ -422,14 +422,63 @@
 
             return decryptedText;
         }
+        public string RC6OFBEncryptFile(string inputFile)
+        {
+            byte[] fileContent = File.ReadAllBytes(inputFile);
+            int length = 16;
+            byte[] key = GenerateKeyAndIV(length);
+            byte[] IV = GenerateKeyAndIV(length);
+
+            uint[] expandedKey = KeyExpansion(key);
+            byte[] encryptedIV = RC6EncryptIV(IV, expandedKey);
+            byte[] encryptedText = Encrypt(fileContent, encryptedIV, expandedKey);
+
+            byte[] expandedKeyBytes = expandedKey.SelectMany(BitConverter.GetBytes).ToArray();
+            string expandedKeyBase64 = Convert.ToBase64String(expandedKeyBytes);
+
+            //string encryptedFile = folderFSWPath;
+            string encryptedFile = Path.Combine(folderFSWPath, Path.GetFileName(inputFile) + ".enc");
+
+            File.WriteAllLines(encryptedFile, new string[]
+            {
+                expandedKeyBase64, 
+                Convert.ToBase64String(encryptedIV), 
+                Convert.ToBase64String(encryptedText) 
+            });
+
+            MessageBox.Show($"Fajl {inputFile} je šifrovan kao {encryptedFile}.");
+            return encryptedFile;
+        }
+        public void RC6OFBDecryptFile(string encryptedFile)
+        {
+            string[] lines = File.ReadAllLines(encryptedFile);
+            if (lines.Length < 3)
+                throw new Exception("Neispravan format šifrovanog fajla.");
+
+            byte[] expandedKeyBytes = Convert.FromBase64String(lines[0]);
+            uint[] expandedKey = new uint[expandedKeyBytes.Length / 4];
+            Buffer.BlockCopy(expandedKeyBytes, 0, expandedKey, 0, expandedKeyBytes.Length);
+
+            byte[] encryptedIV = Convert.FromBase64String(lines[1]);
+            byte[] encryptedText = Convert.FromBase64String(lines[2]);
+            byte[] decryptedText = Decrypt(encryptedText, encryptedIV, expandedKey);
+
+            //Skidam .enc ekstenziju
+            string originalFileName = Path.GetFileNameWithoutExtension(encryptedFile);
+            string decryptedFile = Path.Combine(folderFSWPath1, originalFileName);
+
+            File.WriteAllBytes(decryptedFile, decryptedText);
+
+            MessageBox.Show($"Fajl {encryptedFile} je dešifrovan u {decryptedFile}");
+        }
         #endregion
         public void HandleNewFile(string filePath) 
         {
             MessageBox.Show($"New file detected, path to it: {filePath}");
 
-            string decryptPath = BifidEncryptFile(filePath); 
+            string decryptPath = RC6OFBEncryptFile(filePath);
             MessageBox.Show($"New file to decrypt: {decryptPath}");
-            BifidDecryptFile(decryptPath);
+            RC6OFBDecryptFile(decryptPath);
         }
         private void button1_Click(object sender, EventArgs e)
         {
