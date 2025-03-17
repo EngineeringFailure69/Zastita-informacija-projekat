@@ -111,7 +111,7 @@
         {
             if (!this.IsHandleCreated)
             {
-                return; // Izlazi iz funkcije ako kontrola još nije kreirana
+                return; 
             }
 
             if (this.InvokeRequired)
@@ -134,6 +134,7 @@
         }
         private void Watcher_Created(object sender, FileSystemEventArgs e)
         {
+            bool EncryptedDecrypted = true;
             FileInfo fileInfo = new FileInfo(e.FullPath);
             while (!FileLoaded(fileInfo))
             {
@@ -142,7 +143,7 @@
             filesToUpload.Enqueue(e.FullPath);
             ShowQueue();
 
-            mainForm.ReceiveNewFile(e.FullPath);
+            mainForm.ReceiveNewFile(e.FullPath, EncryptedDecrypted, null);
         }
         private void Watcher_ChangedFileName(object sender, RenamedEventArgs e)
         {
@@ -304,32 +305,31 @@
         }
         private void btnSelectFileToEncrypt_Click(object sender, EventArgs e)
         {
-            using (OpenFileDialog ofd = new OpenFileDialog())
-            {
-                ofd.Filter = "All files (*.*)|*.*";
-                ofd.Title = "Select a file from the directory";
-                ofd.CheckFileExists = true;
-                ofd.FileName = "Select Folder";
-                EmptyQueue();
+            //using (OpenFileDialog ofd = new OpenFileDialog())
+            //{
+            //    ofd.Filter = "All files (*.*)|*.*";
+            //    ofd.Title = "Select a file from the directory";
+            //    ofd.CheckFileExists = true;
+            //    ofd.FileName = "Select Folder";
+            //    EmptyQueue();
 
-                if (ofd.ShowDialog() == DialogResult.OK)
-                {
-                    string selectedFile = ofd.FileName;
-                    label2.Text = selectedFile;
+            //    if (ofd.ShowDialog() == DialogResult.OK)
+            //    {
+            //        string selectedFile = ofd.FileName;
+            //        label2.Text = selectedFile;
 
-                    if (mainForm.IsFSWEnabled == false && cbEnableDisable.Checked == false)
-                    {
-                        lvCurrentFiles.Items.Clear();
-                        SetWatcher();
-                        mainForm.ReceiveNewFile(selectedFile);
-                    }
-                    else 
-                    {
-                        MessageBox.Show("FSW mora biti iskljucen");
-                    }
-                }
-            }
-
+            //        if (mainForm.IsFSWEnabled == false && cbEnableDisable.Checked == false)
+            //        {
+            //            lvCurrentFiles.Items.Clear();
+            //            SetWatcher();
+            //            mainForm.ReceiveNewFile(selectedFile);
+            //        }
+            //        else 
+            //        {
+            //            MessageBox.Show("FSW mora biti iskljucen");
+            //        }
+            //    }
+            //}
         }
     }
 }

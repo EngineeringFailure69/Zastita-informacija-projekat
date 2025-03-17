@@ -5,6 +5,7 @@
         private MainForm mainForm;
         private static string folderFSWPath = @"C:\Users\Windows\Desktop\X\";
         private static string folderFSWPath1 = @"C:\Users\Windows\Desktop\X\";
+        private string selectedFilePath = string.Empty;
         #region BifidDeclarations
         string sentence, encrypted, decrypted;
         string alphabet = "abcdefghiklmnopqrstuvwxyz";
@@ -16,7 +17,7 @@
         //Random rand;
         #endregion
         #region RC6Declarations
-        private const int w = 32; 
+        private const int w = 32;
         private const int r = 20;
         private static readonly uint P32 = 0xB7E15163;
         private static readonly uint Q32 = 0x9E3779B9;
@@ -39,7 +40,7 @@
             this.mainForm = mainForm;
         }
         #region BifidEnkripcija/Dekripcija
-        public char[,] generateSquare() 
+        public char[,] generateSquare()
         {
             letters = new List<char>(alphabet);
             Random rand = new Random();
@@ -132,7 +133,7 @@
                 encryptedText += letter;
             }
 
-           return encryptedText;
+            return encryptedText;
         }
         public string BifidDecrypt(List<int> code, char[,] square)
         {
@@ -167,7 +168,7 @@
                 checkLength -= 10;
             }
 
-            for (int i = 0; i < Count/2; i++)
+            for (int i = 0; i < Count / 2; i++)
             {
                 char letter = square[decRows[i], decCols[i]];
                 decrypted += letter;
@@ -194,14 +195,14 @@
 
 
             string squareString = ConvertSquareToString(square);
-            string encryptedIndices = string.Empty; 
+            string encryptedIndices = string.Empty;
             foreach (var number in code)
             {
                 encryptedIndices += number;
             }
 
             string outputFile = folderFSWPath;
-            File.WriteAllText(outputFile, squareString + Environment.NewLine + encryptedIndices + Environment.NewLine + encryptedText); // Sačuvaj kvadrat pre šifrovanog teksta
+            File.WriteAllText(outputFile, squareString + Environment.NewLine + encryptedIndices + Environment.NewLine + encryptedText); 
 
             MessageBox.Show($"Fajl {inputFile} je šifrovan kao {outputFile}");
             return outputFile;
@@ -320,7 +321,7 @@
         {
             int c = (int)Math.Ceiling(key.Length / 4.0); 
             uint[] L = new uint[c];
-            Array.Clear(L, 0, L.Length); 
+            Array.Clear(L, 0, L.Length);
 
             for (int i = 0; i < key.Length / 4; i++)
                 L[i] = BitConverter.ToUInt32(key, i * 4);
@@ -359,7 +360,7 @@
             B += S[0];
             D += S[1];
 
-            for (int i = 1; i <= r; i++) 
+            for (int i = 1; i <= r; i++)  
             {
                 uint t = RotateLeft(B * (2 * B + 1), 5);
                 uint u = RotateLeft(D * (2 * D + 1), 5);
@@ -397,7 +398,7 @@
 
             for (int i = 0; i < length; i += 16)
             {
-                currentBlock = RC6EncryptIV(currentBlock, S);
+                currentBlock = RC6EncryptIV(currentBlock, S); 
                 Array.Copy(currentBlock, 0, keystream, i, Math.Min(16, length - i));
             }
             return keystream;
@@ -441,15 +442,15 @@
 
             File.WriteAllLines(encryptedFile, new string[]
             {
-                expandedKeyBase64, 
-                Convert.ToBase64String(encryptedIV), 
-                Convert.ToBase64String(encryptedText) 
+                expandedKeyBase64,
+                Convert.ToBase64String(encryptedIV),
+                Convert.ToBase64String(encryptedText)
             });
 
             MessageBox.Show($"Fajl {inputFile} je šifrovan kao {encryptedFile}.");
             return encryptedFile;
         }
-        public void RC6OFBDecryptFile(string encryptedFile)
+        public void RC6OFBDecryptFile(string encryptedFile, string savePath)
         {
             string[] lines = File.ReadAllLines(encryptedFile);
             if (lines.Length < 3)
@@ -463,37 +464,161 @@
             byte[] encryptedText = Convert.FromBase64String(lines[2]);
             byte[] decryptedText = Decrypt(encryptedText, encryptedIV, expandedKey);
 
-            //Skidam .enc ekstenziju
+            //Skidam ekstenziju
             string originalFileName = Path.GetFileNameWithoutExtension(encryptedFile);
-            string decryptedFile = Path.Combine(folderFSWPath1, originalFileName);
+            string origExtension = Path.GetExtension(originalFileName);
+            //string decryptedFile = Path.Combine(savePath, originalFileName);
+            string decryptedFile = savePath + origExtension;
 
             File.WriteAllBytes(decryptedFile, decryptedText);
 
             MessageBox.Show($"Fajl {encryptedFile} je dešifrovan u {decryptedFile}");
         }
         #endregion
-        public void HandleNewFile(string filePath) 
+        public void ClearLabels() 
+        {
+            lblFileAttributes.Text = "Attributes: ";
+            lblFileDateCreated.Text = "Date created: ";
+            lblFileDateModified.Text = "Date modified: ";
+            lblFileExtension.Text = "Extension: ";
+            lblFileName.Text = "File name: ";
+            lblFilePath.Text = "Path: ";
+            lblFileSize.Text = "File size: ";
+        }
+        public void HandleNewFile(string filePath, bool EncryptDecrypt, string? savePath)
         {
             MessageBox.Show($"New file detected, path to it: {filePath}");
-
-            string decryptPath = RC6OFBEncryptFile(filePath);
-            MessageBox.Show($"New file to decrypt: {decryptPath}");
-            RC6OFBDecryptFile(decryptPath);
+            MessageBox.Show("EncryptDecrypt = " + EncryptDecrypt.ToString());
+            string decryptPath = string.Empty;
+            if (EncryptDecrypt == true && mainForm.IsFSWEnabled == false)
+            {
+                decryptPath = RC6OFBEncryptFile(filePath);
+                MessageBox.Show($"New file to decrypt: {decryptPath}");
+            }
+            else if (EncryptDecrypt == false && mainForm.IsFSWEnabled == false)
+                if (string.IsNullOrEmpty(savePath))
+                    MessageBox.Show("Niste odabrali mesto gde ce se fajl sacuvati nakon dekripcije");
+                else
+                    RC6OFBDecryptFile(filePath, savePath);
+            else if (mainForm.IsFSWEnabled == true && EncryptDecrypt == true) 
+            {
+                decryptPath = RC6OFBEncryptFile(filePath);
+                MessageBox.Show($"New file to decrypt: {decryptPath}");
+            }
+            else
+            {
+                MessageBox.Show("Greska prilikom enkripcije ili dekripcije");
+            }
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            int length = 16;
-            byte[] key = GenerateKeyAndIV(length);
-            byte[] IV = GenerateKeyAndIV(length);
+            //int length = 16;
+            //byte[] key = GenerateKeyAndIV(length);
+            //byte[] IV = GenerateKeyAndIV(length);
 
-            uint[] expandedKey = KeyExpansion(key);
-            byte[] encryptedIV = RC6EncryptIV(IV, expandedKey);
+            //uint[] expandedKey = KeyExpansion(key);
+            //byte[] encryptedIV = RC6EncryptIV(IV, expandedKey);
 
-            byte[] plaintext = Encoding.UTF8.GetBytes(textBox1.Text);
-            byte[] ciphertext = Encrypt(plaintext, encryptedIV, expandedKey);
-            textBox2.Text = BitConverter.ToString(ciphertext).Replace("-", "");
-            byte[] decryptedText = Decrypt(ciphertext, encryptedIV, expandedKey);
-            textBox3.Text = Encoding.UTF8.GetString(decryptedText);
+            //byte[] plaintext = Encoding.UTF8.GetBytes(textBox1.Text);
+            //byte[] ciphertext = Encrypt(plaintext, encryptedIV, expandedKey);
+            //textBox2.Text = BitConverter.ToString(ciphertext).Replace("-", "");
+            //byte[] decryptedText = Decrypt(ciphertext, encryptedIV, expandedKey);
+            //textBox3.Text = Encoding.UTF8.GetString(decryptedText);
+        }
+        private void btnSelectFileToEncrypt_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "All files (*.*)|*.*";
+                ofd.Title = "Select a file from the directory";
+                ofd.CheckFileExists = true;
+                ofd.FileName = "Select Folder";
+
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    string selectedFile = ofd.FileName;
+                    if (mainForm.IsFSWEnabled == false)
+                    {
+                        lblFilePath.Text = "Path: " + selectedFile;
+                        FileInfo fi = new FileInfo(selectedFile);
+                        long fileSize = fi.Length; // velicina fajla u bajtovima
+                        lblFileSize.Text = lblFileSize.Text + (fileSize / 1000).ToString() + "KB";
+                        string fileName = fi.Name; // ime fajla
+                        lblFileName.Text = lblFileName.Text + fileName;
+                        string fileExtension = fi.Extension; // ekstenzija fajla
+                        lblFileExtension.Text = lblFileExtension.Text + fileExtension;
+                        string fileDateCreated = fi.CreationTime.ToString(); // datum i vreme kreiranja 
+                        lblFileDateCreated.Text = lblFileDateCreated.Text + fileDateCreated;
+                        string fileDateModified = fi.LastWriteTime.ToString(); // datum i vreme poslednje promene 
+                        lblFileDateModified.Text += fileDateModified;
+                        string fileAttributes = fi.Attributes.ToString(); // atributi
+                        lblFileAttributes.Text += fileAttributes;
+                        selectedFilePath = selectedFile;
+                        MessageBox.Show($"Putanja: {selectedFilePath}");
+                    }
+                    else
+                    {
+                        MessageBox.Show("FSW mora biti iskljucen");
+                    }
+                }
+            }
+        }
+        private void btnEncryptSelectedFile_Click(object sender, EventArgs e)
+        {
+            bool EncryptDecrypt = true;
+            string selectedFile = selectedFilePath;
+            if (string.IsNullOrEmpty(selectedFile))
+                MessageBox.Show("Niste odabrali fajl");
+            else if (mainForm.IsFSWEnabled == false)
+            {
+                mainForm.ReceiveNewFile(selectedFile, EncryptDecrypt, null);
+                ClearLabels();
+            }
+            else
+            {
+                MessageBox.Show("FSW mora biti iskljucen");
+            }
+        }
+        private void btnDecryptSelectedFile_Click(object sender, EventArgs e)
+        {
+            bool EncryptDecrypt = false;
+            string selectedFile = selectedFilePath;
+            if (string.IsNullOrEmpty(selectedFile))
+            {
+                MessageBox.Show("Niste odabrali fajl");
+                return;
+            }
+            string extension = Path.GetExtension(selectedFile);
+            if (extension != ".enc")
+            {
+                MessageBox.Show("Fajl koji je odabran nije kriptovan jer nema .enc ekstenziju");
+                return;
+            }
+            if (mainForm.IsFSWEnabled == false)
+            {
+                using (SaveFileDialog sfd = new SaveFileDialog())
+                {
+                    sfd.Title = "Sačuvaj dekriptovani fajl kao";
+                    sfd.Filter = "All files (*.*)|*.*";
+                    sfd.FileName = Path.GetFileNameWithoutExtension(selectedFile);
+
+                    if (sfd.ShowDialog() == DialogResult.OK)
+                    {
+                        string savePath = sfd.FileName;
+                        if (string.IsNullOrEmpty(savePath))
+                            MessageBox.Show("Niste odabrali mesto gde ce se fajl sacuvati nakon dekripcije");
+                        else 
+                        {
+                            mainForm.ReceiveNewFile(selectedFile, EncryptDecrypt, savePath);
+                            ClearLabels();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("FSW mora biti isključen");
+            }
         }
     }
 }
