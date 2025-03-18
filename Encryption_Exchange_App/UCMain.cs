@@ -201,13 +201,13 @@
                 encryptedIndices += number;
             }
 
-            string outputFile = folderFSWPath;
-            File.WriteAllText(outputFile, squareString + Environment.NewLine + encryptedIndices + Environment.NewLine + encryptedText); 
+            string encryptedFile = Path.Combine(folderFSWPath, Path.GetFileName(inputFile) + ".enc");
+            File.WriteAllText(encryptedFile, squareString + Environment.NewLine + encryptedIndices + Environment.NewLine + encryptedText); 
 
-            MessageBox.Show($"Fajl {inputFile} je šifrovan kao {outputFile}");
-            return outputFile;
+            MessageBox.Show($"Fajl {inputFile} je šifrovan kao {encryptedFile}");
+            return encryptedFile;
         }
-        public void BifidDecryptFile(string encryptedFile)
+        public void BifidDecryptFile(string encryptedFile, string savePath)
         {
             try
             {
@@ -235,15 +235,21 @@
 
                 string decryptedText = BifidDecrypt(code, square);
 
-                string outputFolder = Path.GetDirectoryName(folderFSWPath1);
-                if (!Directory.Exists(outputFolder))
-                {
-                    Directory.CreateDirectory(outputFolder);
-                }
+                //string outputFolder = Path.GetDirectoryName(folderFSWPath1);
+                //if (!Directory.Exists(outputFolder))
+                //{
+                //    Directory.CreateDirectory(outputFolder);
+                //}
 
-                File.WriteAllText(folderFSWPath1, decryptedText);
+                //skidam ekstenziju 
+                string originalFileName = Path.GetFileNameWithoutExtension(encryptedFile);
+                string origExtension = Path.GetExtension(originalFileName);
+                //string decryptedFile = Path.Combine(savePath, originalFileName);
+                string decryptedFile = savePath + origExtension;
 
-                MessageBox.Show($"Fajl {folderFSWPath1} je uspešno dešifrovan!");
+                File.WriteAllText(decryptedFile, decryptedText);
+
+                MessageBox.Show($"Fajl {encryptedFile} je dešifrovan u {decryptedFile}");
             }
             catch (Exception ex)
             {
@@ -475,6 +481,8 @@
             MessageBox.Show($"Fajl {encryptedFile} je dešifrovan u {decryptedFile}");
         }
         #endregion
+
+        #region Funkcionalnosti
         public void ClearLabels() 
         {
             lblFileAttributes.Text = "Attributes: ";
@@ -487,27 +495,129 @@
         }
         public void HandleNewFile(string filePath, bool EncryptDecrypt, string? savePath)
         {
+            if (mainForm.RC6Checked == true)
+            {
+                EncryptDecryptRC6(filePath, EncryptDecrypt, savePath);
+            }
+            else if (mainForm.BifidChecked == true) 
+            {
+                EncryptDecryptBifid(filePath, EncryptDecrypt, savePath);
+            }
+            else
+            {
+                MessageBox.Show("Greska prilikom enkripcije ili dekripcije");
+            }
+            //MessageBox.Show($"New file detected, path to it: {filePath}");
+            //MessageBox.Show("EncryptDecrypt = " + EncryptDecrypt.ToString());
+            //string decryptPath = string.Empty;
+            //if (EncryptDecrypt == true && mainForm.IsFSWEnabled == false)
+            //{
+            //    decryptPath = RC6OFBEncryptFile(filePath);
+            //    MessageBox.Show($"New file to decrypt: {decryptPath}");
+            //}
+            //else if (EncryptDecrypt == false && mainForm.IsFSWEnabled == false)
+            //    if (string.IsNullOrEmpty(savePath))
+            //        MessageBox.Show("Niste odabrali mesto gde ce se fajl sacuvati nakon dekripcije");
+            //    else
+            //        RC6OFBDecryptFile(filePath, savePath);
+            //else if (mainForm.IsFSWEnabled == true && EncryptDecrypt == true) 
+            //{
+            //    decryptPath = RC6OFBEncryptFile(filePath);
+            //    MessageBox.Show($"New file to decrypt: {decryptPath}");
+            //}
+            //else
+            //{
+            //    MessageBox.Show("Greska prilikom enkripcije ili dekripcije");
+            //}
+        }
+        public void EncryptDecryptRC6(string filePath, bool EncryptDecrypt, string? savePath) 
+        {
             MessageBox.Show($"New file detected, path to it: {filePath}");
             MessageBox.Show("EncryptDecrypt = " + EncryptDecrypt.ToString());
             string decryptPath = string.Empty;
             if (EncryptDecrypt == true && mainForm.IsFSWEnabled == false)
             {
-                decryptPath = RC6OFBEncryptFile(filePath);
-                MessageBox.Show($"New file to decrypt: {decryptPath}");
+                Task task = Task.Run(() =>
+                {
+                    MessageBox.Show("Encryption started");
+                    decryptPath = RC6OFBEncryptFile(filePath);
+                    MessageBox.Show($"New file to decrypt: {decryptPath}");
+                });
+                //decryptPath = RC6OFBEncryptFile(filePath);
+                //MessageBox.Show($"New file to decrypt: {decryptPath}");
             }
             else if (EncryptDecrypt == false && mainForm.IsFSWEnabled == false)
                 if (string.IsNullOrEmpty(savePath))
                     MessageBox.Show("Niste odabrali mesto gde ce se fajl sacuvati nakon dekripcije");
-                else
-                    RC6OFBDecryptFile(filePath, savePath);
-            else if (mainForm.IsFSWEnabled == true && EncryptDecrypt == true) 
+                else 
+                {
+                    Task task = Task.Run(() =>
+                    {
+                        RC6OFBDecryptFile(filePath, savePath);
+                        MessageBox.Show("Decryption over");
+                    });
+                } 
+                   // RC6OFBDecryptFile(filePath, savePath);
+            else if (mainForm.IsFSWEnabled == true && EncryptDecrypt == true)
             {
-                decryptPath = RC6OFBEncryptFile(filePath);
-                MessageBox.Show($"New file to decrypt: {decryptPath}");
+                Task task = Task.Run(() =>
+                {
+                    MessageBox.Show("Encryption started");
+                    decryptPath = RC6OFBEncryptFile(filePath);
+                    MessageBox.Show($"New file to decrypt: {decryptPath}");
+                });
             }
             else
             {
-                MessageBox.Show("Greska prilikom enkripcije ili dekripcije");
+                MessageBox.Show("Greska prilikom enkripcije ili dekripcije RC6");
+            }
+        }
+        public void EncryptDecryptBifid(string filePath, bool EncryptDecrypt, string? savePath)
+        {
+            MessageBox.Show($"New file detected, path to it: {filePath}");
+            MessageBox.Show("EncryptDecrypt = " + EncryptDecrypt.ToString());
+            string decryptPath = string.Empty;
+            if (EncryptDecrypt == true && mainForm.IsFSWEnabled == false)
+            {
+                Task task = Task.Run(() =>
+                {
+                    MessageBox.Show("Encryption started");
+                    decryptPath = BifidEncryptFile(filePath);
+                    MessageBox.Show($"New file to decrypt: {decryptPath}");
+                });
+                //decryptPath = BifidEncryptFile(filePath);
+                //MessageBox.Show($"New file to decrypt: {decryptPath}");
+            }
+            else if (EncryptDecrypt == false && mainForm.IsFSWEnabled == false)
+                if (string.IsNullOrEmpty(savePath))
+                    MessageBox.Show("Niste odabrali mesto gde ce se fajl sacuvati nakon dekripcije");
+                else 
+                {
+                    Task task = Task.Run(() =>
+                    {
+                        MessageBox.Show("Decryption started");
+                        BifidDecryptFile(filePath, savePath);
+                        MessageBox.Show($"Decryption over, file {filePath} decrypted");
+                    });
+                    //MessageBox.Show("Decryption started");
+                    //BifidDecryptFile(filePath, savePath);
+                    //MessageBox.Show($"New file to decrypt: {decryptPath}");
+                }
+                    //BifidDecryptFile(filePath, savePath);
+            else if (mainForm.IsFSWEnabled == true && EncryptDecrypt == true)
+            {
+                Task task = Task.Run(() =>
+                {
+                    MessageBox.Show("Encryption started");
+                    decryptPath = BifidEncryptFile(filePath);
+                    MessageBox.Show($"Encryption over, new file to decrypt: {decryptPath}");
+                });
+                //decryptPath = BifidEncryptFile(filePath);
+                //MessageBox.Show($"New file to decrypt: {decryptPath}");
+            }
+            else
+            {
+                MessageBox.Show("Greska prilikom enkripcije ili dekripcije Bifid");
             }
         }
         private void button1_Click(object sender, EventArgs e)
@@ -620,5 +730,6 @@
                 MessageBox.Show("FSW mora biti isključen");
             }
         }
+        #endregion
     }
 }

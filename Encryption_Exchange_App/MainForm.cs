@@ -4,6 +4,8 @@
     {
         public bool IsFSWEnabled = false;
         public bool IsCreatingChecked = false;
+        public bool RC6Checked = false;
+        public bool BifidChecked = true;
         UCMain uCMain;
         public MainForm()
         {
