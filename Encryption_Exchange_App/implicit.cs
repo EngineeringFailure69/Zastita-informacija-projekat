@@ -13,3 +13,5 @@ global using System.Runtime.InteropServices; //dodato
 global using Microsoft.Win32; //dodato
 global using System.Runtime.ConstrainedExecution; //dodato
 global using System.Security.Cryptography; //dodato
+global using Test.EncryptionDecryption_Algorithms; //dodato
+global using Encryption_Exchange_App;
