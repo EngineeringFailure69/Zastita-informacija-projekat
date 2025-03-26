@@ -17,3 +17,5 @@ global using Test.EncryptionDecryption_Algorithms; //dodato
 global using Encryption_Exchange_App; //dodato
 global using System.Runtime.CompilerServices; // dodato
 global using Encryption_Exchange_App.Functionalities; //dodato
+global using System.Net; //dodato
+global using System.Net.Sockets; //dodato

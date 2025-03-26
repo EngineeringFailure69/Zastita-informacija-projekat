@@ -7,12 +7,15 @@
         private MainFunctionalities mainFunctionalities;
         private FSWFunctionalities fSWFunctionalities;
 
-        //private static string folderFSWPath = @"C:\Users\Windows\Desktop\X\";
+        private static string folderFSWPath = @"C:\Users\Windows\Desktop\X\";
         //private static string folderFSWPath1 = @"C:\Users\Windows\Desktop\Target";
         private string selectedFilePath = string.Empty;
 
         private FileSystemWatcher watcher;
         private Queue<String> filesToUpload;
+
+        private Socket serverSocket;
+        //private static string folderFSWPath1 = @"C:\Users\Windows\Desktop\X\";
 
         public Main()
         {
@@ -28,7 +31,7 @@
             //bifid = new Bifid();
             mainFunctionalities = new MainFunctionalities();
 
-            fSWFunctionalities = new FSWFunctionalities(this, cbEnableDisable, cbCreating, cbDeleting, 
+            fSWFunctionalities = new FSWFunctionalities(this, cbEnableDisable, cbCreating, cbDeleting,
                 cbRenaming, this, lvCurrentFiles, rbBifid, watcher, filesToUpload);
 
             lblStatus.Text = "";
@@ -56,6 +59,18 @@
         private void FSWSettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             tabControl.SelectedTab = tabFSWSettingsPage;
+        }
+        private void TCPSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tabControl.SelectedTab = tabTCPSettingsPage;
+        }
+        private void serverSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tabControl.SelectedTab = tabTCPServerSettingsPage;
+        }
+        private void clientSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tabControl.SelectedTab = tabTCPClientSettingsPage;
         }
         #endregion
 
@@ -225,6 +240,179 @@
         private void cbRenaming_CheckedChanged(object sender, EventArgs e)
         {
             fSWFunctionalities.cbRenamingCheckChanged();
+        }
+        #endregion
+
+        #region TCPFunctionalities
+        public async Task AdvanceKlijent()
+        {
+            try
+            {
+                using (Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
+                {
+                    await clientSocket.ConnectAsync(this.tbIPAddress.Text, Int32.Parse(this.tbPort.Text));
+                    UpdateStatus(lblClientStatus, "Povezan sa serverom");
+
+                    using (NetworkStream networkStream = new NetworkStream(clientSocket))
+                    using (BinaryReader reader = new BinaryReader(networkStream))
+                    using (BinaryWriter writer = new BinaryWriter(networkStream))
+                    {
+                        string filePath = this.lblChosenFile.Text;
+                        string fileName = Path.GetFileName(filePath);
+                        long fileSize = new FileInfo(filePath).Length;
+
+                        //Slanje metapodataka  
+                        writer.Write(fileName);
+                        writer.Write(fileSize);
+
+                        //Slanje blokova
+                        using (FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                        {
+                            byte[] buffer = new byte[4096];
+                            int bytesRead;
+
+                            while ((bytesRead = await fileStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                            {
+                                await networkStream.WriteAsync(buffer, 0, bytesRead);
+                            }
+                        }
+
+                        //Odgovor servera
+                        string response = reader.ReadString();
+                        UpdateStatus(lblClientStatus, $"Server response: {response}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                UpdateStatus(lblClientStatus, $"Error: {ex.Message}");
+            }
+        }
+        public async Task AdvanceServer()
+        {
+            serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+            try
+            {
+                serverSocket.Bind(new IPEndPoint(IPAddress.Any, Int32.Parse(this.tbPort.Text)));
+                serverSocket.Listen(5);
+                UpdateStatus(lblServerStatus, "Server je spreman i osluškuje konekcije");
+
+                while (true)
+                {
+                    Socket clientSocket = await serverSocket.AcceptAsync();
+                    Task.Run(() => HandleClientAsyncAdvance(clientSocket));
+                }
+            }
+            catch (Exception ex)
+            {
+                UpdateStatus(lblServerStatus, $"Error: {ex.Message}");
+            }
+            finally
+            {
+                serverSocket.Close();
+            }
+        }
+        private async Task HandleClientAsyncAdvance(Socket clientSocket)
+        {
+            try
+            {
+                using (NetworkStream networkStream = new NetworkStream(clientSocket))
+                using (BinaryReader reader = new BinaryReader(networkStream))
+                using (BinaryWriter writer = new BinaryWriter(networkStream))
+                {
+                    string fileName = reader.ReadString();
+                    long fileSize = reader.ReadInt64();
+
+                    UpdateStatus(lblServerStatus, $"Preuzimanje fajla: {fileName} ({fileSize} bytes)");
+
+                    string savePath = Path.Combine(Directory.GetCurrentDirectory(), "Received_" + fileName);
+                    using (FileStream fileStream = new FileStream(savePath, FileMode.Create, FileAccess.Write))
+                    {
+                        byte[] buffer = new byte[4096];
+                        long totalBytesReceived = 0;
+
+                        while (totalBytesReceived < fileSize)
+                        {
+                            int bytesRead = await networkStream.ReadAsync(buffer, 0, buffer.Length);
+                            if (bytesRead == 0) break;
+
+                            await fileStream.WriteAsync(buffer, 0, bytesRead);
+                            totalBytesReceived += bytesRead;
+                        }
+                    }
+
+                    UpdateStatus(lblServerStatus, $"Fajl {fileName} uspešno preuzet.");
+                    writer.Write("Fajl je uspešno preuzet.");
+                }
+            }
+            catch (Exception ex)
+            {
+                UpdateStatus(lblServerStatus, $"Error handling client: {ex.Message}");
+            }
+            finally
+            {
+                clientSocket.Close();
+            }
+        }
+        private void UpdateStatus(Label statusLabel, string message)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action(() => statusLabel.Text = message));
+            }
+            else
+            {
+                statusLabel.Text = message;
+            }
+        }
+        private void btnChoseFile_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "All files (*.*)|*.*";
+                ofd.Title = "Select a file you want to send";
+                ofd.CheckFileExists = true;
+
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    this.lblChosenFile.Text = ofd.FileName;
+
+                    UpdateStatus(lblClientStatus, $"Odabran je fajl {lblChosenFile.Text}");
+
+                }
+                else
+                {
+                    MessageBox.Show("FSW mora biti iskljucen");
+                }
+
+            }
+        }
+        private void btnSendFile_Click(object sender, EventArgs e)
+        {
+            Task task = Task.Run(() =>
+            {
+                AdvanceKlijent();
+            });
+        }
+        private void btnStartListening_Click(object sender, EventArgs e)
+        {
+            Task task = Task.Run(() =>
+            {
+                AdvanceServer();
+            });
+        }
+        private void btnStopListening_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                serverSocket?.Close();
+                UpdateStatus(lblServerStatus, "Server je zaustavljen.");
+            }
+            catch (Exception ex)
+            {
+                UpdateStatus(lblServerStatus, $"Greška u prekidu slušanja: {ex.Message}");
+            }
         }
         #endregion
     }
