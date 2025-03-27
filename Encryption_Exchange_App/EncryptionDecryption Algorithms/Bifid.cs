@@ -270,20 +270,6 @@
             }
             return sb.ToString();
         }
-        //public void ResetData()
-        //{
-        //    sentence = textBox1.Text;
-        //    encrypted = string.Empty;
-        //    decrypted = string.Empty;
-        //    rows.Clear();
-        //    cols.Clear();
-        //    code.Clear();
-
-        //    string alphabet = "abcdefghiklmnopqrstuvwxyz";
-        //    letters = new List<char>(alphabet);
-
-        //    square = new char[5, 5];
-        //}
         #endregion
     }
 }

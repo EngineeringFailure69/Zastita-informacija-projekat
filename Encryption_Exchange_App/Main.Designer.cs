@@ -78,13 +78,13 @@
             lblChosenFile = new Label();
             label3 = new Label();
             tabTCPServerSettingsPage = new TabPage();
+            lblServerStatus = new Label();
             btnStopListening = new Button();
             textBox1 = new TextBox();
             label4 = new Label();
             btnStartListening = new Button();
             tabTCPSettingsPage = new TabPage();
             checkedListBox1 = new CheckedListBox();
-            lblServerStatus = new Label();
             menuStrip1.SuspendLayout();
             tabFSWSettingsPage.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -599,6 +599,15 @@
             tabTCPServerSettingsPage.Text = "TCP server settings";
             tabTCPServerSettingsPage.UseVisualStyleBackColor = true;
             // 
+            // lblServerStatus
+            // 
+            lblServerStatus.AutoSize = true;
+            lblServerStatus.Location = new Point(418, 66);
+            lblServerStatus.Name = "lblServerStatus";
+            lblServerStatus.Size = new Size(49, 20);
+            lblServerStatus.TabIndex = 4;
+            lblServerStatus.Text = "Status";
+            // 
             // btnStopListening
             // 
             btnStopListening.Location = new Point(364, 165);
@@ -615,6 +624,8 @@
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(125, 27);
             textBox1.TabIndex = 2;
+            textBox1.Text = "5000";
+            textBox1.TextAlign = HorizontalAlignment.Center;
             // 
             // label4
             // 
@@ -653,15 +664,6 @@
             checkedListBox1.Name = "checkedListBox1";
             checkedListBox1.Size = new Size(150, 114);
             checkedListBox1.TabIndex = 0;
-            // 
-            // lblServerStatus
-            // 
-            lblServerStatus.AutoSize = true;
-            lblServerStatus.Location = new Point(418, 66);
-            lblServerStatus.Name = "lblServerStatus";
-            lblServerStatus.Size = new Size(49, 20);
-            lblServerStatus.TabIndex = 4;
-            lblServerStatus.Text = "Status";
             // 
             // Main
             // 

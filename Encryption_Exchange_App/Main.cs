@@ -2,10 +2,11 @@
 {
     public partial class Main : Form
     {
-        //private RC6OFB rc6ofb;
-        //private Bifid bifid;
+        private RC6OFB rc6ofb;
+        private Bifid bifid;
         private MainFunctionalities mainFunctionalities;
         private FSWFunctionalities fSWFunctionalities;
+        private SHA_1 sha1;
 
         private static string folderFSWPath = @"C:\Users\Windows\Desktop\X\";
         //private static string folderFSWPath1 = @"C:\Users\Windows\Desktop\Target";
@@ -27,9 +28,10 @@
             watcher = new FileSystemWatcher();
             filesToUpload = new Queue<string>();
 
-            //rc6ofb = new RC6OFB();
-            //bifid = new Bifid();
+            rc6ofb = new RC6OFB();
+            bifid = new Bifid();
             mainFunctionalities = new MainFunctionalities();
+            sha1 = new SHA_1(); 
 
             fSWFunctionalities = new FSWFunctionalities(this, cbEnableDisable, cbCreating, cbDeleting,
                 cbRenaming, this, lvCurrentFiles, rbBifid, watcher, filesToUpload);
@@ -248,6 +250,13 @@
         {
             try
             {
+                string fileToEncrypt = selectedFilePath; //dodato
+                string fileToSend = string.Empty;
+                if (rbBifid.Checked==true)
+                    fileToSend = bifid.BifidEncryptFile(fileToEncrypt); //dodato
+                else
+                    fileToSend = rc6ofb.RC6OFBEncryptFile(fileToEncrypt); //dodato
+
                 using (Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
                 {
                     await clientSocket.ConnectAsync(this.tbIPAddress.Text, Int32.Parse(this.tbPort.Text));
@@ -257,15 +266,20 @@
                     using (BinaryReader reader = new BinaryReader(networkStream))
                     using (BinaryWriter writer = new BinaryWriter(networkStream))
                     {
-                        string filePath = this.lblChosenFile.Text;
+                        //string filePath = this.lblChosenFile.Text;  //vrati
+                        string filePath = fileToSend; //dodato
                         string fileName = Path.GetFileName(filePath);
                         long fileSize = new FileInfo(filePath).Length;
+                        byte[] hash = sha1.GenerateHash(File.ReadAllBytes(filePath));
+                        int hashLength = hash.Length;
 
-                        //Slanje metapodataka  
+                        //Slanje metapodataka
                         writer.Write(fileName);
                         writer.Write(fileSize);
+                        writer.Write(hashLength);
+                        writer.Write(hash);
 
-                        //Slanje blokova
+                        //Slanje fajla u blokovima
                         using (FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                         {
                             byte[] buffer = new byte[4096];
@@ -279,6 +293,7 @@
 
                         //Odgovor servera
                         string response = reader.ReadString();
+                        File.Delete(filePath);
                         UpdateStatus(lblClientStatus, $"Server response: {response}");
                     }
                 }
@@ -323,11 +338,12 @@
                 {
                     string fileName = reader.ReadString();
                     long fileSize = reader.ReadInt64();
+                    int hashLength = reader.ReadInt32();
+                    byte[] expectedHash = reader.ReadBytes(hashLength);
 
-                    UpdateStatus(lblServerStatus, $"Preuzimanje fajla: {fileName} ({fileSize} bytes)");
+                    UpdateStatus(lblServerStatus, $"Preuzimanje i provera fajla: {fileName} ({fileSize} bytes)");
 
-                    string savePath = Path.Combine(Directory.GetCurrentDirectory(), "Received_" + fileName);
-                    using (FileStream fileStream = new FileStream(savePath, FileMode.Create, FileAccess.Write))
+                    using (MemoryStream memoryStream = new MemoryStream())
                     {
                         byte[] buffer = new byte[4096];
                         long totalBytesReceived = 0;
@@ -337,13 +353,33 @@
                             int bytesRead = await networkStream.ReadAsync(buffer, 0, buffer.Length);
                             if (bytesRead == 0) break;
 
-                            await fileStream.WriteAsync(buffer, 0, bytesRead);
+                            await memoryStream.WriteAsync(buffer, 0, bytesRead);
                             totalBytesReceived += bytesRead;
                         }
-                    }
 
-                    UpdateStatus(lblServerStatus, $"Fajl {fileName} uspešno preuzet.");
-                    writer.Write("Fajl je uspešno preuzet.");
+                        if (totalBytesReceived != fileSize)
+                        {
+                            UpdateStatus(lblServerStatus, "Greska: velicina primljenog fajla ne odgovara ocekivanoj");
+                            writer.Write("Fajl nije uspesno preuzet: neodgovarajuća velicina");
+                            return;
+                        }
+
+                        byte[] receivedData = memoryStream.ToArray();
+                        byte[] generatedHash = sha1.GenerateHash(receivedData);
+
+                        if (!generatedHash.SequenceEqual(expectedHash))
+                        {
+                            UpdateStatus(lblServerStatus, "Greska: hash vrednosti se ne poklapaju");
+                            writer.Write("Fajl nije uspesno preuzet: hash vrednosti se ne poklapaju");
+                            return;
+                        }
+
+                        string savePath = Path.Combine(Directory.GetCurrentDirectory(), "Received_" + fileName);
+                        File.WriteAllBytes(savePath, receivedData);
+
+                        UpdateStatus(lblServerStatus, $"Fajl {fileName} uspešno preuzet i verifikovan");
+                        writer.Write("Fajl je uspešno preuzet i verifikovan");
+                    }
                 }
             }
             catch (Exception ex)
@@ -373,10 +409,13 @@
                 ofd.Filter = "All files (*.*)|*.*";
                 ofd.Title = "Select a file you want to send";
                 ofd.CheckFileExists = true;
+                ofd.FileName = "Select Folder";
 
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
                     this.lblChosenFile.Text = ofd.FileName;
+                    string selectedFile = ofd.FileName;
+                    selectedFilePath = selectedFile;
 
                     UpdateStatus(lblClientStatus, $"Odabran je fajl {lblChosenFile.Text}");
 
@@ -391,7 +430,7 @@
         private void btnSendFile_Click(object sender, EventArgs e)
         {
             Task task = Task.Run(() =>
-            {
+            { 
                 AdvanceKlijent();
             });
         }
