@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            ComponentResourceManager resources = new ComponentResourceManager(typeof(Main));
             menuStrip1 = new MenuStrip();
             mainPageToolStripMenuItem = new ToolStripMenuItem();
             encryptionToolStripMenuItem = new ToolStripMenuItem();
@@ -39,13 +40,18 @@
             fSWToolStripMenuItem = new ToolStripMenuItem();
             FSWSettingsToolStripMenuItem = new ToolStripMenuItem();
             tabFSWSettingsPage = new TabPage();
+            groupBox6 = new GroupBox();
+            label1 = new Label();
+            lblStatus = new Label();
+            groupBox5 = new GroupBox();
+            rcbLog = new RichTextBox();
+            groupBox4 = new GroupBox();
+            pictureBox1 = new PictureBox();
+            label6 = new Label();
             label2 = new Label();
             groupBox3 = new GroupBox();
             cbEnableDisable = new CheckBox();
-            cbDataChange = new CheckBox();
-            label1 = new Label();
             cbRenaming = new CheckBox();
-            lblStatus = new Label();
             cbDeleting = new CheckBox();
             cbCreating = new CheckBox();
             btnUploadDirectory = new Button();
@@ -85,8 +91,14 @@
             btnStartListening = new Button();
             tabTCPSettingsPage = new TabPage();
             checkedListBox1 = new CheckedListBox();
+            label7 = new Label();
+            lblNumber = new Label();
             menuStrip1.SuspendLayout();
             tabFSWSettingsPage.SuspendLayout();
+            groupBox6.SuspendLayout();
+            groupBox5.SuspendLayout();
+            groupBox4.SuspendLayout();
+            ((ISupportInitialize)pictureBox1).BeginInit();
             groupBox3.SuspendLayout();
             gbFilesInTheDirectory.SuspendLayout();
             tabEncryptionSettingsPage.SuspendLayout();
@@ -174,7 +186,9 @@
             // 
             // tabFSWSettingsPage
             // 
-            tabFSWSettingsPage.Controls.Add(label2);
+            tabFSWSettingsPage.Controls.Add(groupBox6);
+            tabFSWSettingsPage.Controls.Add(groupBox5);
+            tabFSWSettingsPage.Controls.Add(groupBox4);
             tabFSWSettingsPage.Controls.Add(groupBox3);
             tabFSWSettingsPage.Controls.Add(btnUploadDirectory);
             tabFSWSettingsPage.Controls.Add(gbFilesInTheDirectory);
@@ -186,27 +200,106 @@
             tabFSWSettingsPage.Text = "FSW settings";
             tabFSWSettingsPage.UseVisualStyleBackColor = true;
             // 
+            // groupBox6
+            // 
+            groupBox6.Controls.Add(lblNumber);
+            groupBox6.Controls.Add(label7);
+            groupBox6.Controls.Add(label1);
+            groupBox6.Controls.Add(lblStatus);
+            groupBox6.Location = new Point(12, 289);
+            groupBox6.Name = "groupBox6";
+            groupBox6.Size = new Size(462, 75);
+            groupBox6.TabIndex = 20;
+            groupBox6.TabStop = false;
+            groupBox6.Text = "Status";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(28, 37);
+            label1.Name = "label1";
+            label1.Size = new Size(87, 20);
+            label1.TabIndex = 1;
+            label1.Text = "FSW status: ";
+            // 
+            // lblStatus
+            // 
+            lblStatus.AutoSize = true;
+            lblStatus.Location = new Point(121, 37);
+            lblStatus.Name = "lblStatus";
+            lblStatus.Size = new Size(56, 20);
+            lblStatus.TabIndex = 2;
+            lblStatus.Text = "status...";
+            // 
+            // groupBox5
+            // 
+            groupBox5.Controls.Add(rcbLog);
+            groupBox5.Location = new Point(12, 158);
+            groupBox5.Name = "groupBox5";
+            groupBox5.Size = new Size(464, 125);
+            groupBox5.TabIndex = 19;
+            groupBox5.TabStop = false;
+            groupBox5.Text = "Log";
+            // 
+            // rcbLog
+            // 
+            rcbLog.Location = new Point(6, 26);
+            rcbLog.Name = "rcbLog";
+            rcbLog.Size = new Size(452, 83);
+            rcbLog.TabIndex = 0;
+            rcbLog.Text = "";
+            // 
+            // groupBox4
+            // 
+            groupBox4.Controls.Add(pictureBox1);
+            groupBox4.Controls.Add(label6);
+            groupBox4.Controls.Add(label2);
+            groupBox4.Location = new Point(12, 6);
+            groupBox4.Name = "groupBox4";
+            groupBox4.Size = new Size(762, 67);
+            groupBox4.TabIndex = 18;
+            groupBox4.TabStop = false;
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
+            pictureBox1.Location = new Point(496, 13);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(51, 42);
+            pictureBox1.SizeMode = PictureBoxSizeMode.AutoSize;
+            pictureBox1.TabIndex = 0;
+            pictureBox1.TabStop = false;
+            pictureBox1.Click += pictureBox1_Click;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Italic, GraphicsUnit.Point, 0);
+            label6.Location = new Point(139, 9);
+            label6.Name = "label6";
+            label6.Size = new Size(317, 46);
+            label6.TabIndex = 19;
+            label6.Text = "File System Watcher";
+            // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(10, 120);
+            label2.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Italic, GraphicsUnit.Point, 0);
+            label2.Location = new Point(314, 118);
             label2.Name = "label2";
-            label2.Size = new Size(50, 20);
+            label2.Size = new Size(317, 46);
             label2.TabIndex = 17;
-            label2.Text = "label2";
+            label2.Text = "File System Watcher";
             // 
             // groupBox3
             // 
             groupBox3.Controls.Add(cbEnableDisable);
-            groupBox3.Controls.Add(cbDataChange);
-            groupBox3.Controls.Add(label1);
             groupBox3.Controls.Add(cbRenaming);
-            groupBox3.Controls.Add(lblStatus);
             groupBox3.Controls.Add(cbDeleting);
             groupBox3.Controls.Add(cbCreating);
-            groupBox3.Location = new Point(4, 5);
+            groupBox3.Location = new Point(12, 79);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(583, 83);
+            groupBox3.Size = new Size(464, 73);
             groupBox3.TabIndex = 16;
             groupBox3.TabStop = false;
             groupBox3.Text = "Tracking";
@@ -222,25 +315,6 @@
             cbEnableDisable.UseVisualStyleBackColor = true;
             cbEnableDisable.CheckedChanged += cbEnableDisable_CheckedChanged;
             // 
-            // cbDataChange
-            // 
-            cbDataChange.AutoSize = true;
-            cbDataChange.Location = new Point(468, 26);
-            cbDataChange.Name = "cbDataChange";
-            cbDataChange.Size = new Size(115, 24);
-            cbDataChange.TabIndex = 10;
-            cbDataChange.Text = "Data change";
-            cbDataChange.UseVisualStyleBackColor = true;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(6, 52);
-            label1.Name = "label1";
-            label1.Size = new Size(87, 20);
-            label1.TabIndex = 1;
-            label1.Text = "FSW status: ";
-            // 
             // cbRenaming
             // 
             cbRenaming.AutoSize = true;
@@ -251,15 +325,6 @@
             cbRenaming.Text = "Renaming";
             cbRenaming.UseVisualStyleBackColor = true;
             cbRenaming.CheckedChanged += cbRenaming_CheckedChanged;
-            // 
-            // lblStatus
-            // 
-            lblStatus.AutoSize = true;
-            lblStatus.Location = new Point(99, 52);
-            lblStatus.Name = "lblStatus";
-            lblStatus.Size = new Size(56, 20);
-            lblStatus.TabIndex = 2;
-            lblStatus.Text = "status...";
             // 
             // cbDeleting
             // 
@@ -665,11 +730,29 @@
             checkedListBox1.Size = new Size(150, 114);
             checkedListBox1.TabIndex = 0;
             // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(216, 37);
+            label7.Name = "label7";
+            label7.Size = new Size(142, 20);
+            label7.TabIndex = 3;
+            label7.Text = "Number of changes:";
+            // 
+            // lblNumber
+            // 
+            lblNumber.AutoSize = true;
+            lblNumber.Location = new Point(376, 37);
+            lblNumber.Name = "lblNumber";
+            lblNumber.Size = new Size(69, 20);
+            lblNumber.TabIndex = 4;
+            lblNumber.Text = "number...";
+            // 
             // Main
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 474);
+            ClientSize = new Size(800, 457);
             Controls.Add(tabControl);
             Controls.Add(menuStrip1);
             Name = "Main";
@@ -677,7 +760,12 @@
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             tabFSWSettingsPage.ResumeLayout(false);
-            tabFSWSettingsPage.PerformLayout();
+            groupBox6.ResumeLayout(false);
+            groupBox6.PerformLayout();
+            groupBox5.ResumeLayout(false);
+            groupBox4.ResumeLayout(false);
+            groupBox4.PerformLayout();
+            ((ISupportInitialize)pictureBox1).EndInit();
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
             gbFilesInTheDirectory.ResumeLayout(false);
@@ -708,10 +796,8 @@
         private ToolStripMenuItem fSWToolStripMenuItem;
         private ToolStripMenuItem FSWSettingsToolStripMenuItem;
         private TabPage tabFSWSettingsPage;
-        private Label label2;
         private GroupBox groupBox3;
         private CheckBox cbEnableDisable;
-        private CheckBox cbDataChange;
         private Label label1;
         private CheckBox cbRenaming;
         private Label lblStatus;
@@ -756,5 +842,14 @@
         private Label label4;
         private Label lblClientStatus;
         private Label lblServerStatus;
+        private PictureBox pictureBox1;
+        private GroupBox groupBox4;
+        private Label label2;
+        private Label label6;
+        private GroupBox groupBox5;
+        private RichTextBox rcbLog;
+        private GroupBox groupBox6;
+        private Label lblNumber;
+        private Label label7;
     }
 }

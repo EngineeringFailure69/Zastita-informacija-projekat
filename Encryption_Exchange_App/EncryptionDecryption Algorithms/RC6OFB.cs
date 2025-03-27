@@ -2,8 +2,6 @@
 {
     public class RC6OFB
     {
-        //public MainForm form1 = new MainForm();
-
         #region RC6Declarations
         private const int w = 32;
         private const int r = 20;

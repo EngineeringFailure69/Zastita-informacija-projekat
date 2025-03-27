@@ -10,12 +10,16 @@
         private CheckBox cbDeleting;
         private CheckBox cbCreating;
         private CheckBox cbRenaming;
+        private RichTextBox rcbLog;
+        private Label lblNumber;
         private FileSystemWatcher watcher;
         private Queue<String> filesToUpload;
+        private int counter = 0;
 
         public FSWFunctionalities(Main forma, CheckBox cbEnableDisable, CheckBox cbCreating,
             CheckBox cbDeleting, CheckBox cbRenaming, Control uiControl, ListView lvCurrentFiles,
-            RadioButton rbBifid, FileSystemWatcher watcher, Queue<string> filesToUpload)
+            RadioButton rbBifid, FileSystemWatcher watcher, Queue<string> filesToUpload, 
+            RichTextBox rcbLog, Label lblNumber)
         {
             this.forma = forma;
             this.cbEnableDisable = cbEnableDisable;
@@ -27,6 +31,8 @@
             this.cbRenaming = cbRenaming;
             this.watcher = watcher;
             this.filesToUpload = filesToUpload;
+            this.rcbLog = rcbLog;
+            this.lblNumber = lblNumber;
         }
 
         private MainFunctionalities mainFunctionalities = new MainFunctionalities();
@@ -186,13 +192,17 @@
             filesToUpload.Enqueue(e.FullPath);
             ShowQueue();
 
+            counter += 1;
+            lblNumber.Text = counter.ToString();
             mainFunctionalities.HandleNewFile(e.FullPath, EncryptedDecrypted, null, rbChecked, FSWActive);
+            FillTheLog(rcbLog, fileInfo.CreationTime.ToString(), $"Kreiran fajl: {fileInfo.Name}");
         }
         private void Watcher_ChangedFileName(object sender, RenamedEventArgs e)
         {
             string oldfile = Path.GetFileName(e.OldFullPath);
             string newfile = Path.GetFileName(e.FullPath);
-
+            DateTime currentTime = DateTime.Now;
+            string formattedTime = currentTime.ToString("HH:mm:ss");
             Queue<string> updatedQueue = new Queue<string>();
 
             while (filesToUpload.Count > 0)
@@ -211,12 +221,17 @@
             filesToUpload = updatedQueue;
 
             ShowQueue();
+            counter += 1;
+            lblNumber.Text = counter.ToString();
+            FillTheLog(rcbLog, formattedTime, $"Promena imena fajla: {oldfile} u {newfile}");
         }
         private void Watcher_Deleted(object sender, FileSystemEventArgs e)
         {
             string file = Path.GetFileName(e.FullPath);
-
+            FileInfo fileInfo = new FileInfo(e.FullPath);
             Queue<string> updatedQueue = new Queue<string>();
+            DateTime currentTime = DateTime.Now;
+            string formattedTime = currentTime.ToString("HH:mm:ss");
 
             while (filesToUpload.Count > 0)
             {
@@ -230,6 +245,9 @@
             filesToUpload = updatedQueue;
 
             ShowQueue();
+            counter += 1;
+            lblNumber.Text = counter.ToString();
+            FillTheLog(rcbLog, formattedTime, $"Uklonjen fajl: {fileInfo.Name}");
         }
         private bool FileLoaded(FileInfo file)
         {
@@ -248,6 +266,11 @@
                     stream.Close();
             }
             return true;
+        }
+        public void FillTheLog(RichTextBox rcbLog, string time, string action) 
+        {
+            rcbLog.AppendText($"[{time}] " + action + "\r\n");
+            rcbLog.ScrollToCaret();
         }
     }
 }
