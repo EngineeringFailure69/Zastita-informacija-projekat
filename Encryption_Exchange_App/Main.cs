@@ -2,55 +2,61 @@
 {
     public partial class Main : Form
     {
-        //private RC6OFB rc6ofb;
-        //private Bifid bifid;
         private MainFunctionalities mainFunctionalities;
         private FSWFunctionalities fSWFunctionalities;
-        //private SHA_1 sha1;
         private TCPFunctionalities tCPFunctionalities;
 
-        //private static string folderFSWPath = @"C:\Users\Windows\Desktop\X\";
-        //private static string folderFSWPath1 = @"C:\Users\Windows\Desktop\Target";
         private string selectedFilePath = string.Empty;
 
         private FileSystemWatcher watcher;
         private Queue<String> filesToUpload;
 
         private Socket serverSocket;
-        //private static string folderFSWPath1 = @"C:\Users\Windows\Desktop\X\";
 
         public Main()
         {
             InitializeComponent();
-            tabControl.Appearance = TabAppearance.FlatButtons;
-            tabControl.ItemSize = new Size(0, 1);
-            tabControl.SizeMode = TabSizeMode.Fixed;
+            StartStyle();
 
             watcher = new FileSystemWatcher();
             filesToUpload = new Queue<string>();
             serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-            //rc6ofb = new RC6OFB();
-            //bifid = new Bifid();
             mainFunctionalities = new MainFunctionalities();
-            //sha1 = new SHA_1(); 
 
             fSWFunctionalities = new FSWFunctionalities(this, cbEnableDisable, cbCreating, cbDeleting,
                 cbRenaming, this, lvCurrentFiles, rbBifid, watcher, filesToUpload, rcbLog, lblNumber);
 
             tCPFunctionalities = new TCPFunctionalities(this, rbBifid, tbIPAddress, tbPort, lblClientStatus,
                  lblServerStatus, this, serverSocket);
+        }
+
+        public void StartStyle() 
+        {
+            tabControl.Appearance = TabAppearance.FlatButtons;
+            tabControl.ItemSize = new Size(0, 1);
+            tabControl.SizeMode = TabSizeMode.Fixed;
 
             lblStatus.Text = "";
             lblStatus.Enabled = false;
             label1.Enabled = false;
             cbCreating.Enabled = false;
-            //cbDataChange.Enabled = false;
             cbDeleting.Enabled = false;
             cbRenaming.Enabled = false;
             btnUploadDirectory.Enabled = false;
-            //lblActive.Text = "";
             lblNumber.Text = "";
+
+            lblFilePath.AutoSize = false;
+            lblFilePath.Width = 520;
+            lblFilePath.MaximumSize = new Size(520, 20);
+            lblFilePath.TextAlign = ContentAlignment.MiddleLeft; // Poravnanje teksta
+            lblFilePath.AutoEllipsis = true; // Prikazuje "..." ako tekst ne stane
+
+            lblFileName.AutoSize = false;
+            lblFileName.Width = 520;
+            lblFileName.MaximumSize = new Size(520, 20);
+            lblFileName.TextAlign = ContentAlignment.MiddleLeft;
+            lblFileName.AutoEllipsis = true;
 
             lvCurrentFiles.View = View.Details;
             lvCurrentFiles.Columns.Add("File names: ", lvCurrentFiles.Width, HorizontalAlignment.Left);
@@ -94,10 +100,11 @@
             lblFilePath.Text = "Path: ";
             lblFileSize.Text = "File size: ";
         }
-        private void btnSelectFileToEncryptDecrypt_Click(object sender, EventArgs e)
+        private void btnSelectFileToEncryptDecrypt_Click_1(object sender, EventArgs e)
         {
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
+                ClearLabels();
                 ofd.Filter = "All files (*.*)|*.*";
                 ofd.Title = "Select a file from the directory";
                 ofd.CheckFileExists = true;
@@ -132,7 +139,7 @@
                 }
             }
         }
-        private void btnEncryptSelectedFile_Click(object sender, EventArgs e)
+        private void btnEncryptSelectedFile_Click_1(object sender, EventArgs e)
         {
             bool EncryptDecrypt = true;
             bool FSWActive = cbEnableDisable.Checked;
@@ -146,7 +153,9 @@
                 MessageBox.Show("Niste odabrali fajl");
             else if (cbEnableDisable.Checked == false)
             {
+                
                 mainFunctionalities.HandleNewFile(selectedFile, EncryptDecrypt, null, rbChecked, FSWActive);
+                mainFunctionalities.FillTheLog(rtbLog, null, $"File {selectedFile} encrypted using ", rbChecked, false);
                 ClearLabels();
             }
             else
@@ -154,7 +163,7 @@
                 MessageBox.Show("FSW mora biti iskljucen");
             }
         }
-        private void btnDecryptSelectedFile_Click(object sender, EventArgs e)
+        private void btnDecryptSelectedFile_Click_1(object sender, EventArgs e)
         {
             bool EncryptDecrypt = false;
             bool FSWActive = cbEnableDisable.Checked;
@@ -192,6 +201,7 @@
                         else
                         {
                             mainFunctionalities.HandleNewFile(selectedFile, EncryptDecrypt, savePath, rbChecked, FSWActive);
+                            mainFunctionalities.FillTheLog(rtbLog, null, $"File {selectedFile} decrypted using ", rbChecked,  false);
                             ClearLabels();
                         }
                     }
@@ -212,11 +222,9 @@
                 lblStatus.BackColor = Color.Green;
                 lblStatus.Text = "Running";
                 cbCreating.Enabled = true;
-                //cbDataChange.Enabled = true;
                 cbDeleting.Enabled = true;
                 cbRenaming.Enabled = true;
                 btnUploadDirectory.Enabled = true;
-                //lblActive.Text = "Active tracking";
 
                 fSWFunctionalities.SetWatcher();
             }
@@ -225,15 +233,13 @@
                 lblStatus.BackColor = Color.Red;
                 lblStatus.Text = "Stopped";
                 cbCreating.Enabled = false;
-                //cbDataChange.Enabled = false;
                 cbDeleting.Enabled = false;
                 cbRenaming.Enabled = false;
                 cbCreating.Checked = false;
-                //cbDataChange.Checked = false;
                 cbDeleting.Checked = false;
                 cbRenaming.Checked = false;
                 btnUploadDirectory.Enabled = false;
-                //lblActive.Text = "";
+
                 lvCurrentFiles.Items.Clear();
                 fSWFunctionalities.EmptyQueue();
             }
@@ -253,6 +259,10 @@
         private void cbRenaming_CheckedChanged(object sender, EventArgs e)
         {
             fSWFunctionalities.cbRenamingCheckChanged();
+        }
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("FSW folder icon, you know, a lil bit of style won't hurt ;)");
         }
         #endregion
 
@@ -308,10 +318,5 @@
             }
         }
         #endregion
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }

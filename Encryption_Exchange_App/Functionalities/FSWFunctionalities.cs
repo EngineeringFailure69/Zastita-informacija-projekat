@@ -195,7 +195,7 @@
             counter += 1;
             lblNumber.Text = counter.ToString();
             mainFunctionalities.HandleNewFile(e.FullPath, EncryptedDecrypted, null, rbChecked, FSWActive);
-            FillTheLog(rcbLog, fileInfo.CreationTime.ToString(), $"Kreiran fajl: {fileInfo.Name}");
+            mainFunctionalities.FillTheLog(rcbLog, fileInfo.CreationTime.ToString(), $"Created file: {fileInfo.Name}", null,  true);
         }
         private void Watcher_ChangedFileName(object sender, RenamedEventArgs e)
         {
@@ -223,7 +223,7 @@
             ShowQueue();
             counter += 1;
             lblNumber.Text = counter.ToString();
-            FillTheLog(rcbLog, formattedTime, $"Promena imena fajla: {oldfile} u {newfile}");
+            mainFunctionalities.FillTheLog(rcbLog, formattedTime, $"Changed file name: from {oldfile} to {newfile}", null, true);
         }
         private void Watcher_Deleted(object sender, FileSystemEventArgs e)
         {
@@ -247,7 +247,7 @@
             ShowQueue();
             counter += 1;
             lblNumber.Text = counter.ToString();
-            FillTheLog(rcbLog, formattedTime, $"Uklonjen fajl: {fileInfo.Name}");
+            mainFunctionalities.FillTheLog(rcbLog, formattedTime, $"Deleted file: {fileInfo.Name}",null, true);
         }
         private bool FileLoaded(FileInfo file)
         {
@@ -266,11 +266,6 @@
                     stream.Close();
             }
             return true;
-        }
-        public void FillTheLog(RichTextBox rcbLog, string time, string action) 
-        {
-            rcbLog.AppendText($"[{time}] " + action + "\r\n");
-            rcbLog.ScrollToCaret();
         }
     }
 }

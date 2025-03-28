@@ -98,5 +98,21 @@
                 MessageBox.Show("Greska prilikom enkripcije ili dekripcije Bifid");
             }
         }
+        public void FillTheLog(RichTextBox rtbLog, string? time, string action, bool? rbChecked, bool? isFSW) 
+        {
+            if (isFSW == true)
+            {
+                rtbLog.AppendText($"[{time}] " + action + "\r\n");
+                rtbLog.ScrollToCaret();
+            }
+            else 
+            {
+                DateTime currentTime = DateTime.Now;
+                string formattedTime = currentTime.ToString("HH:mm:ss");
+                action += (rbChecked == true) ? "RC6+OFB algorithm" : "Bifid cypher";
+                rtbLog.AppendText($"[{formattedTime}] " + action + "\r\n");
+                rtbLog.ScrollToCaret();
+            }
+        }
     }
 }

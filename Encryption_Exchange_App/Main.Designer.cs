@@ -41,6 +41,8 @@
             FSWSettingsToolStripMenuItem = new ToolStripMenuItem();
             tabFSWSettingsPage = new TabPage();
             groupBox6 = new GroupBox();
+            lblNumber = new Label();
+            label7 = new Label();
             label1 = new Label();
             lblStatus = new Label();
             groupBox5 = new GroupBox();
@@ -58,13 +60,9 @@
             gbFilesInTheDirectory = new GroupBox();
             lvCurrentFiles = new ListView();
             tabEncryptionSettingsPage = new TabPage();
-            groupBox2 = new GroupBox();
-            rbRC6OFB = new RadioButton();
-            rbBifid = new RadioButton();
-            tabMainPage = new TabPage();
+            groupBox7 = new GroupBox();
+            rtbLog = new RichTextBox();
             groupBox1 = new GroupBox();
-            btnDecryptSelectedFile = new Button();
-            btnEncryptSelectedFile = new Button();
             btnSelectFileToEncryptDecrypt = new Button();
             lblFileSize = new Label();
             lblFileAttributes = new Label();
@@ -73,6 +71,12 @@
             lblFileExtension = new Label();
             lblFilePath = new Label();
             lblFileName = new Label();
+            groupBox2 = new GroupBox();
+            btnDecryptSelectedFile = new Button();
+            rbRC6OFB = new RadioButton();
+            rbBifid = new RadioButton();
+            btnEncryptSelectedFile = new Button();
+            tabMainPage = new TabPage();
             tabControl = new TabControl();
             tabTCPClientSettingsPage = new TabPage();
             lblClientStatus = new Label();
@@ -91,8 +95,6 @@
             btnStartListening = new Button();
             tabTCPSettingsPage = new TabPage();
             checkedListBox1 = new CheckedListBox();
-            label7 = new Label();
-            lblNumber = new Label();
             menuStrip1.SuspendLayout();
             tabFSWSettingsPage.SuspendLayout();
             groupBox6.SuspendLayout();
@@ -102,9 +104,9 @@
             groupBox3.SuspendLayout();
             gbFilesInTheDirectory.SuspendLayout();
             tabEncryptionSettingsPage.SuspendLayout();
-            groupBox2.SuspendLayout();
-            tabMainPage.SuspendLayout();
+            groupBox7.SuspendLayout();
             groupBox1.SuspendLayout();
+            groupBox2.SuspendLayout();
             tabControl.SuspendLayout();
             tabTCPClientSettingsPage.SuspendLayout();
             tabTCPServerSettingsPage.SuspendLayout();
@@ -212,6 +214,24 @@
             groupBox6.TabIndex = 20;
             groupBox6.TabStop = false;
             groupBox6.Text = "Status";
+            // 
+            // lblNumber
+            // 
+            lblNumber.AutoSize = true;
+            lblNumber.Location = new Point(376, 37);
+            lblNumber.Name = "lblNumber";
+            lblNumber.Size = new Size(69, 20);
+            lblNumber.TabIndex = 4;
+            lblNumber.Text = "number...";
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(216, 37);
+            label7.Name = "label7";
+            label7.Size = new Size(142, 20);
+            label7.TabIndex = 3;
+            label7.Text = "Number of changes:";
             // 
             // label1
             // 
@@ -378,6 +398,8 @@
             // 
             // tabEncryptionSettingsPage
             // 
+            tabEncryptionSettingsPage.Controls.Add(groupBox7);
+            tabEncryptionSettingsPage.Controls.Add(groupBox1);
             tabEncryptionSettingsPage.Controls.Add(groupBox2);
             tabEncryptionSettingsPage.Location = new Point(4, 29);
             tabEncryptionSettingsPage.Name = "tabEncryptionSettingsPage";
@@ -387,16 +409,136 @@
             tabEncryptionSettingsPage.Text = "Encryption settings";
             tabEncryptionSettingsPage.UseVisualStyleBackColor = true;
             // 
+            // groupBox7
+            // 
+            groupBox7.Controls.Add(rtbLog);
+            groupBox7.Location = new Point(6, 220);
+            groupBox7.Name = "groupBox7";
+            groupBox7.Size = new Size(756, 149);
+            groupBox7.TabIndex = 5;
+            groupBox7.TabStop = false;
+            groupBox7.Text = "Log";
+            // 
+            // rtbLog
+            // 
+            rtbLog.Location = new Point(6, 23);
+            rtbLog.Name = "rtbLog";
+            rtbLog.Size = new Size(744, 120);
+            rtbLog.TabIndex = 5;
+            rtbLog.Text = "";
+            // 
+            // groupBox1
+            // 
+            groupBox1.Controls.Add(btnSelectFileToEncryptDecrypt);
+            groupBox1.Controls.Add(lblFileSize);
+            groupBox1.Controls.Add(lblFileAttributes);
+            groupBox1.Controls.Add(lblFileDateModified);
+            groupBox1.Controls.Add(lblFileDateCreated);
+            groupBox1.Controls.Add(lblFileExtension);
+            groupBox1.Controls.Add(lblFilePath);
+            groupBox1.Controls.Add(lblFileName);
+            groupBox1.Location = new Point(6, 3);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(525, 193);
+            groupBox1.TabIndex = 4;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Select and encrypt";
+            // 
+            // btnSelectFileToEncryptDecrypt
+            // 
+            btnSelectFileToEncryptDecrypt.Location = new Point(141, 158);
+            btnSelectFileToEncryptDecrypt.Name = "btnSelectFileToEncryptDecrypt";
+            btnSelectFileToEncryptDecrypt.Size = new Size(216, 29);
+            btnSelectFileToEncryptDecrypt.TabIndex = 21;
+            btnSelectFileToEncryptDecrypt.Text = "Select file to encrypt/decrypt";
+            btnSelectFileToEncryptDecrypt.UseVisualStyleBackColor = true;
+            btnSelectFileToEncryptDecrypt.Click += btnSelectFileToEncryptDecrypt_Click_1;
+            // 
+            // lblFileSize
+            // 
+            lblFileSize.AutoSize = true;
+            lblFileSize.Location = new Point(6, 83);
+            lblFileSize.Name = "lblFileSize";
+            lblFileSize.Size = new Size(68, 20);
+            lblFileSize.TabIndex = 17;
+            lblFileSize.Text = "File size: ";
+            // 
+            // lblFileAttributes
+            // 
+            lblFileAttributes.AutoSize = true;
+            lblFileAttributes.Location = new Point(330, 83);
+            lblFileAttributes.Name = "lblFileAttributes";
+            lblFileAttributes.Size = new Size(77, 20);
+            lblFileAttributes.TabIndex = 15;
+            lblFileAttributes.Text = "Attributes:";
+            // 
+            // lblFileDateModified
+            // 
+            lblFileDateModified.AutoSize = true;
+            lblFileDateModified.Location = new Point(258, 110);
+            lblFileDateModified.Name = "lblFileDateModified";
+            lblFileDateModified.Size = new Size(109, 20);
+            lblFileDateModified.TabIndex = 18;
+            lblFileDateModified.Text = "Date Modified:";
+            // 
+            // lblFileDateCreated
+            // 
+            lblFileDateCreated.AutoSize = true;
+            lblFileDateCreated.Location = new Point(6, 110);
+            lblFileDateCreated.Name = "lblFileDateCreated";
+            lblFileDateCreated.Size = new Size(98, 20);
+            lblFileDateCreated.TabIndex = 19;
+            lblFileDateCreated.Text = "Date created:";
+            // 
+            // lblFileExtension
+            // 
+            lblFileExtension.AutoSize = true;
+            lblFileExtension.Location = new Point(178, 83);
+            lblFileExtension.Name = "lblFileExtension";
+            lblFileExtension.Size = new Size(75, 20);
+            lblFileExtension.TabIndex = 20;
+            lblFileExtension.Text = "Extension:";
+            // 
+            // lblFilePath
+            // 
+            lblFilePath.AutoSize = true;
+            lblFilePath.Location = new Point(6, 23);
+            lblFilePath.Name = "lblFilePath";
+            lblFilePath.Size = new Size(44, 20);
+            lblFilePath.TabIndex = 14;
+            lblFilePath.Text = "Path: ";
+            // 
+            // lblFileName
+            // 
+            lblFileName.AutoSize = true;
+            lblFileName.Location = new Point(6, 52);
+            lblFileName.Name = "lblFileName";
+            lblFileName.Size = new Size(80, 20);
+            lblFileName.TabIndex = 16;
+            lblFileName.Text = "File name: ";
+            // 
             // groupBox2
             // 
+            groupBox2.Controls.Add(btnDecryptSelectedFile);
             groupBox2.Controls.Add(rbRC6OFB);
             groupBox2.Controls.Add(rbBifid);
-            groupBox2.Location = new Point(6, 6);
+            groupBox2.Controls.Add(btnEncryptSelectedFile);
+            groupBox2.Location = new Point(537, 3);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(250, 125);
+            groupBox2.Size = new Size(225, 193);
             groupBox2.TabIndex = 3;
             groupBox2.TabStop = false;
             groupBox2.Text = "Pick the encryption algorithm ";
+            // 
+            // btnDecryptSelectedFile
+            // 
+            btnDecryptSelectedFile.Location = new Point(125, 158);
+            btnDecryptSelectedFile.Name = "btnDecryptSelectedFile";
+            btnDecryptSelectedFile.Size = new Size(94, 29);
+            btnDecryptSelectedFile.TabIndex = 23;
+            btnDecryptSelectedFile.Text = "Decrypt file";
+            btnDecryptSelectedFile.UseVisualStyleBackColor = true;
+            btnDecryptSelectedFile.Click += btnDecryptSelectedFile_Click_1;
             // 
             // rbRC6OFB
             // 
@@ -420,9 +562,18 @@
             rbBifid.Text = "Bifid";
             rbBifid.UseVisualStyleBackColor = true;
             // 
+            // btnEncryptSelectedFile
+            // 
+            btnEncryptSelectedFile.Location = new Point(6, 158);
+            btnEncryptSelectedFile.Name = "btnEncryptSelectedFile";
+            btnEncryptSelectedFile.Size = new Size(94, 29);
+            btnEncryptSelectedFile.TabIndex = 22;
+            btnEncryptSelectedFile.Text = "Encrypt file";
+            btnEncryptSelectedFile.UseVisualStyleBackColor = true;
+            btnEncryptSelectedFile.Click += btnEncryptSelectedFile_Click_1;
+            // 
             // tabMainPage
             // 
-            tabMainPage.Controls.Add(groupBox1);
             tabMainPage.Location = new Point(4, 29);
             tabMainPage.Name = "tabMainPage";
             tabMainPage.Padding = new Padding(3);
@@ -430,118 +581,6 @@
             tabMainPage.TabIndex = 0;
             tabMainPage.Text = "Main page";
             tabMainPage.UseVisualStyleBackColor = true;
-            // 
-            // groupBox1
-            // 
-            groupBox1.Controls.Add(btnDecryptSelectedFile);
-            groupBox1.Controls.Add(btnEncryptSelectedFile);
-            groupBox1.Controls.Add(btnSelectFileToEncryptDecrypt);
-            groupBox1.Controls.Add(lblFileSize);
-            groupBox1.Controls.Add(lblFileAttributes);
-            groupBox1.Controls.Add(lblFileDateModified);
-            groupBox1.Controls.Add(lblFileDateCreated);
-            groupBox1.Controls.Add(lblFileExtension);
-            groupBox1.Controls.Add(lblFilePath);
-            groupBox1.Controls.Add(lblFileName);
-            groupBox1.Location = new Point(6, 6);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(756, 267);
-            groupBox1.TabIndex = 0;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "Select and encrypt";
-            // 
-            // btnDecryptSelectedFile
-            // 
-            btnDecryptSelectedFile.Location = new Point(538, 232);
-            btnDecryptSelectedFile.Name = "btnDecryptSelectedFile";
-            btnDecryptSelectedFile.Size = new Size(94, 29);
-            btnDecryptSelectedFile.TabIndex = 23;
-            btnDecryptSelectedFile.Text = "Decrypt file";
-            btnDecryptSelectedFile.UseVisualStyleBackColor = true;
-            btnDecryptSelectedFile.Click += btnDecryptSelectedFile_Click;
-            // 
-            // btnEncryptSelectedFile
-            // 
-            btnEncryptSelectedFile.Location = new Point(138, 232);
-            btnEncryptSelectedFile.Name = "btnEncryptSelectedFile";
-            btnEncryptSelectedFile.Size = new Size(94, 29);
-            btnEncryptSelectedFile.TabIndex = 22;
-            btnEncryptSelectedFile.Text = "Encrypt file";
-            btnEncryptSelectedFile.UseVisualStyleBackColor = true;
-            btnEncryptSelectedFile.Click += btnEncryptSelectedFile_Click;
-            // 
-            // btnSelectFileToEncryptDecrypt
-            // 
-            btnSelectFileToEncryptDecrypt.Location = new Point(277, 232);
-            btnSelectFileToEncryptDecrypt.Name = "btnSelectFileToEncryptDecrypt";
-            btnSelectFileToEncryptDecrypt.Size = new Size(216, 29);
-            btnSelectFileToEncryptDecrypt.TabIndex = 21;
-            btnSelectFileToEncryptDecrypt.Text = "Select file to encrypt/decrypt";
-            btnSelectFileToEncryptDecrypt.UseVisualStyleBackColor = true;
-            btnSelectFileToEncryptDecrypt.Click += btnSelectFileToEncryptDecrypt_Click;
-            // 
-            // lblFileSize
-            // 
-            lblFileSize.AutoSize = true;
-            lblFileSize.Location = new Point(6, 83);
-            lblFileSize.Name = "lblFileSize";
-            lblFileSize.Size = new Size(68, 20);
-            lblFileSize.TabIndex = 17;
-            lblFileSize.Text = "File size: ";
-            // 
-            // lblFileAttributes
-            // 
-            lblFileAttributes.AutoSize = true;
-            lblFileAttributes.Location = new Point(6, 203);
-            lblFileAttributes.Name = "lblFileAttributes";
-            lblFileAttributes.Size = new Size(77, 20);
-            lblFileAttributes.TabIndex = 15;
-            lblFileAttributes.Text = "Attributes:";
-            // 
-            // lblFileDateModified
-            // 
-            lblFileDateModified.AutoSize = true;
-            lblFileDateModified.Location = new Point(6, 173);
-            lblFileDateModified.Name = "lblFileDateModified";
-            lblFileDateModified.Size = new Size(109, 20);
-            lblFileDateModified.TabIndex = 18;
-            lblFileDateModified.Text = "Date Modified:";
-            // 
-            // lblFileDateCreated
-            // 
-            lblFileDateCreated.AutoSize = true;
-            lblFileDateCreated.Location = new Point(6, 143);
-            lblFileDateCreated.Name = "lblFileDateCreated";
-            lblFileDateCreated.Size = new Size(98, 20);
-            lblFileDateCreated.TabIndex = 19;
-            lblFileDateCreated.Text = "Date created:";
-            // 
-            // lblFileExtension
-            // 
-            lblFileExtension.AutoSize = true;
-            lblFileExtension.Location = new Point(6, 113);
-            lblFileExtension.Name = "lblFileExtension";
-            lblFileExtension.Size = new Size(75, 20);
-            lblFileExtension.TabIndex = 20;
-            lblFileExtension.Text = "Extension:";
-            // 
-            // lblFilePath
-            // 
-            lblFilePath.AutoSize = true;
-            lblFilePath.Location = new Point(6, 23);
-            lblFilePath.Name = "lblFilePath";
-            lblFilePath.Size = new Size(44, 20);
-            lblFilePath.TabIndex = 14;
-            lblFilePath.Text = "Path: ";
-            // 
-            // lblFileName
-            // 
-            lblFileName.AutoSize = true;
-            lblFileName.Location = new Point(6, 53);
-            lblFileName.Name = "lblFileName";
-            lblFileName.Size = new Size(80, 20);
-            lblFileName.TabIndex = 16;
-            lblFileName.Text = "File name: ";
             // 
             // tabControl
             // 
@@ -730,24 +769,6 @@
             checkedListBox1.Size = new Size(150, 114);
             checkedListBox1.TabIndex = 0;
             // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Location = new Point(216, 37);
-            label7.Name = "label7";
-            label7.Size = new Size(142, 20);
-            label7.TabIndex = 3;
-            label7.Text = "Number of changes:";
-            // 
-            // lblNumber
-            // 
-            lblNumber.AutoSize = true;
-            lblNumber.Location = new Point(376, 37);
-            lblNumber.Name = "lblNumber";
-            lblNumber.Size = new Size(69, 20);
-            lblNumber.TabIndex = 4;
-            lblNumber.Text = "number...";
-            // 
             // Main
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -770,11 +791,11 @@
             groupBox3.PerformLayout();
             gbFilesInTheDirectory.ResumeLayout(false);
             tabEncryptionSettingsPage.ResumeLayout(false);
-            groupBox2.ResumeLayout(false);
-            groupBox2.PerformLayout();
-            tabMainPage.ResumeLayout(false);
+            groupBox7.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
+            groupBox2.ResumeLayout(false);
+            groupBox2.PerformLayout();
             tabControl.ResumeLayout(false);
             tabTCPClientSettingsPage.ResumeLayout(false);
             tabTCPClientSettingsPage.PerformLayout();
@@ -811,17 +832,6 @@
         private RadioButton rbRC6OFB;
         private RadioButton rbBifid;
         private TabPage tabMainPage;
-        private GroupBox groupBox1;
-        private Button btnDecryptSelectedFile;
-        private Button btnEncryptSelectedFile;
-        private Button btnSelectFileToEncryptDecrypt;
-        private Label lblFileSize;
-        private Label lblFileAttributes;
-        private Label lblFileDateModified;
-        private Label lblFileDateCreated;
-        private Label lblFileExtension;
-        private Label lblFilePath;
-        private Label lblFileName;
         private TabControl tabControl;
         private TabPage tabTCPClientSettingsPage;
         private ToolStripMenuItem serverSettingsToolStripMenuItem;
@@ -851,5 +861,18 @@
         private GroupBox groupBox6;
         private Label lblNumber;
         private Label label7;
+        private GroupBox groupBox1;
+        private Button btnDecryptSelectedFile;
+        private Button btnEncryptSelectedFile;
+        private Button btnSelectFileToEncryptDecrypt;
+        private Label lblFileSize;
+        private Label lblFileAttributes;
+        private Label lblFileDateModified;
+        private Label lblFileDateCreated;
+        private Label lblFileExtension;
+        private Label lblFilePath;
+        private Label lblFileName;
+        private GroupBox groupBox7;
+        private RichTextBox rtbLog;
     }
 }
