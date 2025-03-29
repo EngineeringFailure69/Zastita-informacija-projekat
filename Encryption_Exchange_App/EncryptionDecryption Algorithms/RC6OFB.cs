@@ -1,4 +1,4 @@
-﻿namespace Test.EncryptionDecryption_Algorithms
+﻿namespace Encryption_Exchange_App.EncryptionDecryption_Algorithms
 {
     public class RC6OFB
     {

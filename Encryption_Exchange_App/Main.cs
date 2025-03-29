@@ -2,9 +2,11 @@
 {
     public partial class Main : Form
     {
-        private MainFunctionalities mainFunctionalities;
+        private EncryptionFunctionalities encryptionFunctionalities;
         private FSWFunctionalities fSWFunctionalities;
         private TCPFunctionalities tCPFunctionalities;
+        private GlobalFunctionalities globalFunctionalities;
+        private MainFunctionalities mainFunctionalities;
 
         private string selectedFilePath = string.Empty;
 
@@ -23,15 +25,18 @@
             serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
             mainFunctionalities = new MainFunctionalities();
+            encryptionFunctionalities = new EncryptionFunctionalities(lblNumberOfEncryptedFiles, lblNumberOfDecryptedFiles);
+            globalFunctionalities = new GlobalFunctionalities();
 
             fSWFunctionalities = new FSWFunctionalities(this, cbEnableDisable, cbCreating, cbDeleting,
-                cbRenaming, this, lvCurrentFiles, rbBifid, watcher, filesToUpload, rcbLog, lblNumber);
+                cbRenaming, this, lvCurrentFiles, rbBifid, watcher, filesToUpload, rcbLog, lblNumber, lblNumberOfEncryptedFiles);
+            //lblNumberOfEncryptedFiles, lblNumberOfDecryptedFiles
 
             tCPFunctionalities = new TCPFunctionalities(this, rbBifid, tbIPAddress, tbPort, lblClientStatus,
                  lblServerStatus, this, serverSocket);
         }
 
-        public void StartStyle() 
+        public void StartStyle()
         {
             tabControl.Appearance = TabAppearance.FlatButtons;
             tabControl.ItemSize = new Size(0, 1);
@@ -57,6 +62,10 @@
             lblFileName.MaximumSize = new Size(520, 20);
             lblFileName.TextAlign = ContentAlignment.MiddleLeft;
             lblFileName.AutoEllipsis = true;
+
+            lblFSWStatus.Text = "FSW inactive   |";
+            lblEncryptingAlgoStatus.Text = "Bifid encrypting active";
+            lblLastActivity.Text = "";
 
             lvCurrentFiles.View = View.Details;
             lvCurrentFiles.Columns.Add("File names: ", lvCurrentFiles.Width, HorizontalAlignment.Left);
@@ -89,128 +98,27 @@
         }
         #endregion
 
-        #region MainFunctionalities
-        public void ClearLabels()
-        {
-            lblFileAttributes.Text = "Attributes: ";
-            lblFileDateCreated.Text = "Date created: ";
-            lblFileDateModified.Text = "Date modified: ";
-            lblFileExtension.Text = "Extension: ";
-            lblFileName.Text = "File name: ";
-            lblFilePath.Text = "Path: ";
-            lblFileSize.Text = "File size: ";
-        }
+        #region EncryptionFunctionalities
         private void btnSelectFileToEncryptDecrypt_Click_1(object sender, EventArgs e)
         {
-            using (OpenFileDialog ofd = new OpenFileDialog())
-            {
-                ClearLabels();
-                ofd.Filter = "All files (*.*)|*.*";
-                ofd.Title = "Select a file from the directory";
-                ofd.CheckFileExists = true;
-                ofd.FileName = "Select Folder";
-
-                if (ofd.ShowDialog() == DialogResult.OK)
-                {
-                    string selectedFile = ofd.FileName;
-                    if (cbEnableDisable.Checked == false)
-                    {
-                        lblFilePath.Text = "Path: " + selectedFile;
-                        FileInfo fi = new FileInfo(selectedFile);
-                        long fileSize = fi.Length; // velicina fajla u bajtovima
-                        lblFileSize.Text = lblFileSize.Text + (fileSize / 1000).ToString() + "KB";
-                        string fileName = fi.Name; // ime fajla
-                        lblFileName.Text = lblFileName.Text + fileName;
-                        string fileExtension = fi.Extension; // ekstenzija fajla
-                        lblFileExtension.Text = lblFileExtension.Text + fileExtension;
-                        string fileDateCreated = fi.CreationTime.ToString(); // datum i vreme kreiranja 
-                        lblFileDateCreated.Text = lblFileDateCreated.Text + fileDateCreated;
-                        string fileDateModified = fi.LastWriteTime.ToString(); // datum i vreme poslednje promene 
-                        lblFileDateModified.Text += fileDateModified;
-                        string fileAttributes = fi.Attributes.ToString(); // atributi
-                        lblFileAttributes.Text += fileAttributes;
-                        selectedFilePath = selectedFile;
-                        MessageBox.Show($"Putanja: {selectedFilePath}");
-                    }
-                    else
-                    {
-                        MessageBox.Show("FSW mora biti iskljucen");
-                    }
-                }
-            }
+            encryptionFunctionalities.btnSelectFileToEncryptDecryptClick(lblFileAttributes, lblFileDateCreated,
+                lblFileDateModified, lblFileExtension, lblFileName, lblFilePath, lblFileSize, cbEnableDisable);
         }
         private void btnEncryptSelectedFile_Click_1(object sender, EventArgs e)
         {
-            bool EncryptDecrypt = true;
-            bool FSWActive = cbEnableDisable.Checked;
-            bool rbChecked;
-            if (rbBifid.Checked == true)
-                rbChecked = false;
-            else
-                rbChecked = true;
-            string selectedFile = selectedFilePath;
-            if (string.IsNullOrEmpty(selectedFile))
-                MessageBox.Show("Niste odabrali fajl");
-            else if (cbEnableDisable.Checked == false)
-            {
-                
-                mainFunctionalities.HandleNewFile(selectedFile, EncryptDecrypt, null, rbChecked, FSWActive);
-                mainFunctionalities.FillTheLog(rtbLog, null, $"File {selectedFile} encrypted using ", rbChecked, false);
-                ClearLabels();
-            }
-            else
-            {
-                MessageBox.Show("FSW mora biti iskljucen");
-            }
+            encryptionFunctionalities.btnEncryptSelectedFileClick(rbBifid, cbEnableDisable, rtbLog,
+                lblFileAttributes, lblFileDateCreated, lblFileDateModified, lblFileExtension, lblFileName,
+                lblFilePath, lblFileSize);
         }
         private void btnDecryptSelectedFile_Click_1(object sender, EventArgs e)
         {
-            bool EncryptDecrypt = false;
-            bool FSWActive = cbEnableDisable.Checked;
-            bool rbChecked;
-            if (rbBifid.Checked == true)
-                rbChecked = false;
-            else
-                rbChecked = true;
-            string selectedFile = selectedFilePath;
-            if (string.IsNullOrEmpty(selectedFile))
-            {
-                MessageBox.Show("Niste odabrali fajl");
-                return;
-            }
-            string extension = Path.GetExtension(selectedFile);
-            if (extension != ".enc")
-            {
-                MessageBox.Show("Fajl koji je odabran nije kriptovan jer nema .enc ekstenziju");
-                return;
-            }
-            if (cbEnableDisable.Checked == false)
-            {
-                using (SaveFileDialog sfd = new SaveFileDialog())
-                {
-                    sfd.Title = "Sačuvaj dekriptovani fajl kao";
-                    sfd.Filter = "All files (*.*)|*.*";
-                    sfd.FileName = Path.GetFileNameWithoutExtension(selectedFile);
-
-                    if (sfd.ShowDialog() == DialogResult.OK)
-                    {
-                        string savePath = sfd.FileName;
-                        MessageBox.Show($"Save putanja: {savePath}");
-                        if (string.IsNullOrEmpty(savePath))
-                            MessageBox.Show("Niste odabrali mesto gde ce se fajl sacuvati nakon dekripcije");
-                        else
-                        {
-                            mainFunctionalities.HandleNewFile(selectedFile, EncryptDecrypt, savePath, rbChecked, FSWActive);
-                            mainFunctionalities.FillTheLog(rtbLog, null, $"File {selectedFile} decrypted using ", rbChecked,  false);
-                            ClearLabels();
-                        }
-                    }
-                }
-            }
-            else
-            {
-                MessageBox.Show("FSW mora biti isključen");
-            }
+            encryptionFunctionalities.btnDecryptSelectedFileClick(rbBifid, cbEnableDisable, rtbLog,
+            lblFileAttributes, lblFileDateCreated, lblFileDateModified, lblFileExtension, lblFileName,
+            lblFilePath, lblFileSize);
+        }
+        private void rbBifid_CheckedChanged(object sender, EventArgs e)
+        {
+            lblEncryptingAlgoStatus.Text = (rbBifid.Checked) ? "Bifid encrypting active" : "RC6 + OFB encrypting active";
         }
         #endregion
 
@@ -221,6 +129,7 @@
             {
                 lblStatus.BackColor = Color.Green;
                 lblStatus.Text = "Running";
+                lblFSWStatus.Text = "FSW active     |";
                 cbCreating.Enabled = true;
                 cbDeleting.Enabled = true;
                 cbRenaming.Enabled = true;
@@ -232,6 +141,7 @@
             {
                 lblStatus.BackColor = Color.Red;
                 lblStatus.Text = "Stopped";
+                lblFSWStatus.Text = "FSW inactive   |";
                 cbCreating.Enabled = false;
                 cbDeleting.Enabled = false;
                 cbRenaming.Enabled = false;
@@ -269,26 +179,16 @@
         #region TCPFunctionalities
         private void btnChoseFile_Click(object sender, EventArgs e)
         {
-            using (OpenFileDialog ofd = new OpenFileDialog())
+            if (cbEnableDisable.Checked == false)
             {
-                ofd.Filter = "All files (*.*)|*.*";
-                ofd.Title = "Select a file you want to send";
-                ofd.CheckFileExists = true;
-                ofd.FileName = "Select Folder";
+                selectedFilePath = globalFunctionalities.ChoseFile();
+                this.lblChosenFile.Text = selectedFilePath;
 
-                if (ofd.ShowDialog() == DialogResult.OK)
-                {
-                    this.lblChosenFile.Text = ofd.FileName;
-                    string selectedFile = ofd.FileName;
-                    selectedFilePath = selectedFile;
-
-                    tCPFunctionalities.UpdateStatus(lblClientStatus, $"Odabran je fajl {lblChosenFile.Text}");
-                }
-                else
-                {
-                    MessageBox.Show("FSW mora biti iskljucen");
-                }
-
+                tCPFunctionalities.UpdateStatus(lblClientStatus, $"Odabran je fajl: {lblChosenFile.Text}");
+            }
+            else
+            {
+                MessageBox.Show("FSW mora biti iskljucen");
             }
         }
         private void btnSendFile_Click(object sender, EventArgs e)

@@ -77,6 +77,18 @@
             rbBifid = new RadioButton();
             btnEncryptSelectedFile = new Button();
             tabMainPage = new TabPage();
+            groupBox9 = new GroupBox();
+            rtbAppLog = new RichTextBox();
+            groupBox8 = new GroupBox();
+            lblLastActivity = new Label();
+            label10 = new Label();
+            lblNumberOfDecryptedFiles = new Label();
+            label9 = new Label();
+            lblNumberOfEncryptedFiles = new Label();
+            label11 = new Label();
+            lblEncryptingAlgoStatus = new Label();
+            lblFSWStatus = new Label();
+            label8 = new Label();
             tabControl = new TabControl();
             tabTCPClientSettingsPage = new TabPage();
             lblClientStatus = new Label();
@@ -107,6 +119,9 @@
             groupBox7.SuspendLayout();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
+            tabMainPage.SuspendLayout();
+            groupBox9.SuspendLayout();
+            groupBox8.SuspendLayout();
             tabControl.SuspendLayout();
             tabTCPClientSettingsPage.SuspendLayout();
             tabTCPServerSettingsPage.SuspendLayout();
@@ -561,6 +576,7 @@
             rbBifid.TabStop = true;
             rbBifid.Text = "Bifid";
             rbBifid.UseVisualStyleBackColor = true;
+            rbBifid.CheckedChanged += rbBifid_CheckedChanged;
             // 
             // btnEncryptSelectedFile
             // 
@@ -574,6 +590,8 @@
             // 
             // tabMainPage
             // 
+            tabMainPage.Controls.Add(groupBox9);
+            tabMainPage.Controls.Add(groupBox8);
             tabMainPage.Location = new Point(4, 29);
             tabMainPage.Name = "tabMainPage";
             tabMainPage.Padding = new Padding(3);
@@ -581,6 +599,122 @@
             tabMainPage.TabIndex = 0;
             tabMainPage.Text = "Main page";
             tabMainPage.UseVisualStyleBackColor = true;
+            // 
+            // groupBox9
+            // 
+            groupBox9.Controls.Add(rtbAppLog);
+            groupBox9.Location = new Point(3, 261);
+            groupBox9.Name = "groupBox9";
+            groupBox9.Size = new Size(759, 125);
+            groupBox9.TabIndex = 1;
+            groupBox9.TabStop = false;
+            groupBox9.Text = "App log:";
+            // 
+            // rtbAppLog
+            // 
+            rtbAppLog.Location = new Point(6, 26);
+            rtbAppLog.Name = "rtbAppLog";
+            rtbAppLog.Size = new Size(747, 93);
+            rtbAppLog.TabIndex = 2;
+            rtbAppLog.Text = "";
+            // 
+            // groupBox8
+            // 
+            groupBox8.Controls.Add(lblLastActivity);
+            groupBox8.Controls.Add(label10);
+            groupBox8.Controls.Add(lblNumberOfDecryptedFiles);
+            groupBox8.Controls.Add(label9);
+            groupBox8.Controls.Add(lblNumberOfEncryptedFiles);
+            groupBox8.Controls.Add(label11);
+            groupBox8.Controls.Add(lblEncryptingAlgoStatus);
+            groupBox8.Controls.Add(lblFSWStatus);
+            groupBox8.Controls.Add(label8);
+            groupBox8.Location = new Point(6, 6);
+            groupBox8.Name = "groupBox8";
+            groupBox8.Size = new Size(756, 125);
+            groupBox8.TabIndex = 0;
+            groupBox8.TabStop = false;
+            // 
+            // lblLastActivity
+            // 
+            lblLastActivity.AutoSize = true;
+            lblLastActivity.Location = new Point(105, 87);
+            lblLastActivity.Name = "lblLastActivity";
+            lblLastActivity.Size = new Size(58, 20);
+            lblLastActivity.TabIndex = 8;
+            lblLastActivity.Text = "label12";
+            // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.Location = new Point(6, 87);
+            label10.Name = "label10";
+            label10.Size = new Size(93, 20);
+            label10.TabIndex = 7;
+            label10.Text = "Last activity: ";
+            // 
+            // lblNumberOfDecryptedFiles
+            // 
+            lblNumberOfDecryptedFiles.AutoSize = true;
+            lblNumberOfDecryptedFiles.Location = new Point(202, 55);
+            lblNumberOfDecryptedFiles.Name = "lblNumberOfDecryptedFiles";
+            lblNumberOfDecryptedFiles.Size = new Size(17, 20);
+            lblNumberOfDecryptedFiles.TabIndex = 6;
+            lblNumberOfDecryptedFiles.Text = "0";
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Location = new Point(6, 55);
+            label9.Name = "label9";
+            label9.Size = new Size(190, 20);
+            label9.TabIndex = 5;
+            label9.Text = "Number of decrypted files: ";
+            // 
+            // lblNumberOfEncryptedFiles
+            // 
+            lblNumberOfEncryptedFiles.AutoSize = true;
+            lblNumberOfEncryptedFiles.Location = new Point(614, 23);
+            lblNumberOfEncryptedFiles.Name = "lblNumberOfEncryptedFiles";
+            lblNumberOfEncryptedFiles.Size = new Size(17, 20);
+            lblNumberOfEncryptedFiles.TabIndex = 4;
+            lblNumberOfEncryptedFiles.Text = "0";
+            // 
+            // label11
+            // 
+            label11.AutoSize = true;
+            label11.Location = new Point(419, 23);
+            label11.Name = "label11";
+            label11.Size = new Size(189, 20);
+            label11.TabIndex = 3;
+            label11.Text = "Number of encrypted files: ";
+            // 
+            // lblEncryptingAlgoStatus
+            // 
+            lblEncryptingAlgoStatus.AutoSize = true;
+            lblEncryptingAlgoStatus.Location = new Point(183, 23);
+            lblEncryptingAlgoStatus.Name = "lblEncryptingAlgoStatus";
+            lblEncryptingAlgoStatus.Size = new Size(197, 20);
+            lblEncryptingAlgoStatus.TabIndex = 2;
+            lblEncryptingAlgoStatus.Text = "RC6 + OFB encrypting active";
+            // 
+            // lblFSWStatus
+            // 
+            lblFSWStatus.AutoSize = true;
+            lblFSWStatus.Location = new Point(68, 23);
+            lblFSWStatus.Name = "lblFSWStatus";
+            lblFSWStatus.Size = new Size(109, 20);
+            lblFSWStatus.TabIndex = 1;
+            lblFSWStatus.Text = "FSW inactive   |";
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(6, 23);
+            label8.Name = "label8";
+            label8.Size = new Size(56, 20);
+            label8.TabIndex = 0;
+            label8.Text = "Status: ";
             // 
             // tabControl
             // 
@@ -796,6 +930,10 @@
             groupBox1.PerformLayout();
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
+            tabMainPage.ResumeLayout(false);
+            groupBox9.ResumeLayout(false);
+            groupBox8.ResumeLayout(false);
+            groupBox8.PerformLayout();
             tabControl.ResumeLayout(false);
             tabTCPClientSettingsPage.ResumeLayout(false);
             tabTCPClientSettingsPage.PerformLayout();
@@ -874,5 +1012,17 @@
         private Label lblFileName;
         private GroupBox groupBox7;
         private RichTextBox rtbLog;
+        private GroupBox groupBox8;
+        private Label lblNumberOfEncryptedFiles;
+        private Label label11;
+        private Label lblEncryptingAlgoStatus;
+        private Label lblFSWStatus;
+        private Label label8;
+        private GroupBox groupBox9;
+        private RichTextBox rtbAppLog;
+        private Label lblLastActivity;
+        private Label label10;
+        private Label lblNumberOfDecryptedFiles;
+        private Label label9;
     }
 }

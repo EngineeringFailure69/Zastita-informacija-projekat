@@ -12,14 +12,15 @@
         private CheckBox cbRenaming;
         private RichTextBox rcbLog;
         private Label lblNumber;
+        private Label lblNumberOfEncryptedFiles;
         private FileSystemWatcher watcher;
         private Queue<String> filesToUpload;
         private int counter = 0;
-
+        private int encryptionCouter = 0;
         public FSWFunctionalities(Main forma, CheckBox cbEnableDisable, CheckBox cbCreating,
             CheckBox cbDeleting, CheckBox cbRenaming, Control uiControl, ListView lvCurrentFiles,
             RadioButton rbBifid, FileSystemWatcher watcher, Queue<string> filesToUpload, 
-            RichTextBox rcbLog, Label lblNumber)
+            RichTextBox rcbLog, Label lblNumber, Label lblNumberOfEncryptedFiles)
         {
             this.forma = forma;
             this.cbEnableDisable = cbEnableDisable;
@@ -33,34 +34,23 @@
             this.filesToUpload = filesToUpload;
             this.rcbLog = rcbLog;
             this.lblNumber = lblNumber;
+            this.lblNumberOfEncryptedFiles = lblNumberOfEncryptedFiles;
         }
 
-        private MainFunctionalities mainFunctionalities = new MainFunctionalities();
+        private EncryptionFunctionalities encryptionFunctionalities = new EncryptionFunctionalities(null, null);
+        private GlobalFunctionalities globalFunctionalities = new GlobalFunctionalities();
 
         private static string folderFSWPath1 = @"C:\Users\Windows\Desktop\Target";
 
-        public void btnUploadFolder() 
+        public void btnUploadFolder()
         {
-            using (OpenFileDialog ofd = new OpenFileDialog())
+            EmptyQueue();
+            string? selectedFolder = globalFunctionalities.ChoseFolder();
+            folderFSWPath1 = selectedFolder!;
+            if (cbEnableDisable.Checked)
             {
-                ofd.Filter = "All files (*.*)|*.*";
-                ofd.Title = "Select a file from the directory";
-                ofd.CheckFileExists = false;
-                ofd.FileName = "Select Folder";
-                EmptyQueue();
-
-                if (ofd.ShowDialog() == DialogResult.OK)
-                {
-                    string? selectedFolder = Path.GetDirectoryName(ofd.FileName);
-                    folderFSWPath1 = selectedFolder!;
-                    //label2.Text = folderFSWPath1;
-
-                    if (cbEnableDisable.Checked)
-                    {
-                        lvCurrentFiles.Items.Clear();
-                        SetWatcher();
-                    }
-                }
+                lvCurrentFiles.Items.Clear();
+                SetWatcher();
             }
         }
         public void cbCreatingCheckChanged() 
@@ -145,8 +135,6 @@
         }
         public void EmptyQueue()
         {
-            //string[] allFiles = Directory.GetFiles(folderFSWPath);
-            //foreach (var f in allFiles)
             while (filesToUpload.Count > 0)
                 filesToUpload.Dequeue();
         }
@@ -194,8 +182,9 @@
 
             counter += 1;
             lblNumber.Text = counter.ToString();
-            mainFunctionalities.HandleNewFile(e.FullPath, EncryptedDecrypted, null, rbChecked, FSWActive);
-            mainFunctionalities.FillTheLog(rcbLog, fileInfo.CreationTime.ToString(), $"Created file: {fileInfo.Name}", null,  true);
+            encryptionFunctionalities.HandleNewFile(e.FullPath, EncryptedDecrypted, null, rbChecked, FSWActive);
+            UpdateLabel(e.FullPath);
+            globalFunctionalities.FillTheLog(rcbLog, fileInfo.CreationTime.ToString(), $"Created file: {fileInfo.Name}", null,  true);
         }
         private void Watcher_ChangedFileName(object sender, RenamedEventArgs e)
         {
@@ -223,7 +212,7 @@
             ShowQueue();
             counter += 1;
             lblNumber.Text = counter.ToString();
-            mainFunctionalities.FillTheLog(rcbLog, formattedTime, $"Changed file name: from {oldfile} to {newfile}", null, true);
+            globalFunctionalities.FillTheLog(rcbLog, formattedTime, $"Changed file name: from {oldfile} to {newfile}", null, true);
         }
         private void Watcher_Deleted(object sender, FileSystemEventArgs e)
         {
@@ -247,7 +236,7 @@
             ShowQueue();
             counter += 1;
             lblNumber.Text = counter.ToString();
-            mainFunctionalities.FillTheLog(rcbLog, formattedTime, $"Deleted file: {fileInfo.Name}",null, true);
+            globalFunctionalities.FillTheLog(rcbLog, formattedTime, $"Deleted file: {fileInfo.Name}",null, true);
         }
         private bool FileLoaded(FileInfo file)
         {
@@ -266,6 +255,24 @@
                     stream.Close();
             }
             return true;
+        }
+        public void UpdateLabel(string inputFile) 
+        {
+            string extension = Path.GetExtension(inputFile);
+            if ((extension == ".txt" || extension == ".html") && rbBifid.Checked == true) //ako je fajl txt
+            {
+                encryptionCouter += 1;
+                lblNumberOfEncryptedFiles.Text = encryptionCouter.ToString();
+            }
+            else if (rbBifid.Checked == false) 
+            {
+                encryptionCouter += 1;
+                lblNumberOfEncryptedFiles.Text = encryptionCouter.ToString();
+            }
+            else //ako nije txt
+            {
+                MessageBox.Show("FSW test labela update");
+            }
         }
     }
 }
