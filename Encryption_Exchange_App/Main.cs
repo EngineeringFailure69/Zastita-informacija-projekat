@@ -7,6 +7,8 @@
         private TCPFunctionalities tCPFunctionalities;
         private GlobalFunctionalities globalFunctionalities;
         private MainFunctionalities mainFunctionalities;
+        private RC6OFB rc6ofb;
+        private Bifid bifid;
 
         private string selectedFilePath = string.Empty;
 
@@ -25,12 +27,15 @@
             serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
             mainFunctionalities = new MainFunctionalities();
-            encryptionFunctionalities = new EncryptionFunctionalities(lblNumberOfEncryptedFiles, lblNumberOfDecryptedFiles);
+            encryptionFunctionalities = new EncryptionFunctionalities(lblNumberOfEncryptedFiles, lblNumberOfDecryptedFiles, lblLastActivity, rtbAppLog);
             globalFunctionalities = new GlobalFunctionalities();
 
+            rc6ofb = new RC6OFB();
+            bifid = new Bifid();
+
             fSWFunctionalities = new FSWFunctionalities(this, cbEnableDisable, cbCreating, cbDeleting,
-                cbRenaming, this, lvCurrentFiles, rbBifid, watcher, filesToUpload, rcbLog, lblNumber, lblNumberOfEncryptedFiles);
-            //lblNumberOfEncryptedFiles, lblNumberOfDecryptedFiles
+                cbRenaming, this, lvCurrentFiles, rbBifid, watcher, filesToUpload, rcbLog, lblNumber, 
+                lblNumberOfEncryptedFiles, lblLastActivity,  rtbAppLog);
 
             tCPFunctionalities = new TCPFunctionalities(this, rbBifid, tbIPAddress, tbPort, lblClientStatus,
                  lblServerStatus, this, serverSocket);
@@ -65,7 +70,6 @@
 
             lblFSWStatus.Text = "FSW inactive   |";
             lblEncryptingAlgoStatus.Text = "Bifid encrypting active";
-            lblLastActivity.Text = "";
 
             lvCurrentFiles.View = View.Details;
             lvCurrentFiles.Columns.Add("File names: ", lvCurrentFiles.Width, HorizontalAlignment.Left);
@@ -216,6 +220,22 @@
             {
                 tCPFunctionalities.UpdateStatus(lblServerStatus, $"Greška u prekidu slušanja: {ex.Message}");
             }
+        }
+        #endregion
+
+        #region MainFunctionalities
+        private void btnChoseTargetFolder_Click(object sender, EventArgs e)
+        {
+            string folderPath = globalFunctionalities.ChoseFolder();
+            fSWFunctionalities.SetTargetDirectory(folderPath);
+            lblTargetFolder.Text += folderPath;
+        }
+        private void btnChoseXFolder_Click(object sender, EventArgs e)
+        {
+            string folderPath = globalFunctionalities.ChoseFolder();
+            rc6ofb.SetXDirectory(folderPath);
+            bifid.SetXDirectory(folderPath);
+            lblOutputXFolder.Text += folderPath;
         }
         #endregion
     }

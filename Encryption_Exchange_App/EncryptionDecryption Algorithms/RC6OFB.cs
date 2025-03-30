@@ -11,6 +11,10 @@
         #endregion
 
         #region RC6Enkripcija/Dekripcija
+        public void SetXDirectory(string xDirectory)
+        {
+            folderFSWPath = xDirectory;
+        }
         public byte[] GenerateKeyAndIV(int length)
         {
             byte[] randomBytes = new byte[length];

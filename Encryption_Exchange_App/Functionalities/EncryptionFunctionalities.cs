@@ -4,11 +4,15 @@
     {
         private Label lblNumberOfEncryptedFiles;
         private Label lblNumberOfDecryptedFiles;
+        private Label lblLastActivity;
+        private RichTextBox rtbAppLog;
 
-        public EncryptionFunctionalities(Label? lblNumberOfEncryptedFiles, Label? lblNumberOfDecryptedFiles) 
+        public EncryptionFunctionalities(Label? lblNumberOfEncryptedFiles, Label? lblNumberOfDecryptedFiles, Label? lblLastActivity, RichTextBox? rtbAppLog) 
         {
             this.lblNumberOfEncryptedFiles = lblNumberOfEncryptedFiles!;
             this.lblNumberOfDecryptedFiles = lblNumberOfDecryptedFiles!;
+            this.lblLastActivity = lblLastActivity!;
+            this.rtbAppLog = rtbAppLog!;
         }
 
         private RC6OFB rc6ofb = new RC6OFB();
@@ -171,6 +175,9 @@
             bool EncryptDecrypt = true;
             bool FSWActive = cbEnableDisable.Checked;
             bool rbChecked;
+            bool fileExtension;
+            string appLogText = string.Empty;
+            string labelText = string.Empty;
             if (rbBifid.Checked == true)
                 rbChecked = false;
             else
@@ -180,9 +187,16 @@
                 MessageBox.Show("Niste odabrali fajl");
             else if (cbEnableDisable.Checked == false)
             {
-
+                fileExtension = globalFunctionalities.CheckExtension(selectedFile, rbBifid);
+                if (rbBifid.Checked == true && fileExtension == true)
+                    appLogText = $"File {selectedFile} ecnrypted using Bifid cypher";
+                else if (rbBifid.Checked == true && fileExtension == false)
+                    appLogText = $"File {selectedFile} can not be encrypted using Bifid cypher because it is not txt file";
+                else 
+                    appLogText = $"File {selectedFile} encrypted using RC6 + OFB algorithm";
                 HandleNewFile(selectedFile, EncryptDecrypt, null, rbChecked, FSWActive);
-                globalFunctionalities.FillTheLog(rtbLog, null, $"File {selectedFile} encrypted using ", rbChecked, false);
+                globalFunctionalities.FillTheLog(rtbAppLog, rtbLog, null, $"File {selectedFile} encrypted using ", appLogText, false);
+                globalFunctionalities.SetLabelText(lblLastActivity, appLogText);
                 ClearLabels(lblFileAttributes, lblFileDateCreated, lblFileDateModified, lblFileExtension, 
                     lblFileName, lblFilePath, lblFileSize);
             }
@@ -198,6 +212,9 @@
             bool EncryptDecrypt = false;
             bool FSWActive = cbEnableDisable.Checked;
             bool rbChecked;
+            //bool fileExtension;
+            //string  appLogText = string.Empty;
+            string labelText;
             if (rbBifid.Checked == true)
                 rbChecked = false;
             else
@@ -230,8 +247,10 @@
                             MessageBox.Show("Niste odabrali mesto gde ce se fajl sacuvati nakon dekripcije");
                         else
                         {
+                            labelText = (rbBifid.Checked == true) ? $"File {selectedFile} decrypted using Bifid cypher" : $"File {selectedFile} decrypted using RC6 + OFB algorithm";
+                            globalFunctionalities.SetLabelText(lblLastActivity, labelText);
                             HandleNewFile(selectedFile, EncryptDecrypt, savePath, rbChecked, FSWActive);
-                            globalFunctionalities.FillTheLog(rtbLog, null, $"File {selectedFile} decrypted using ", rbChecked, false);
+                            globalFunctionalities.FillTheLog(rtbAppLog, rtbLog, null, $"File {selectedFile} was saved at the {savePath} location after it was decrypted using ", null, false);
                             ClearLabels(lblFileAttributes, lblFileDateCreated, lblFileDateModified, 
                                 lblFileExtension, lblFileName, lblFilePath, lblFileSize);
                         }

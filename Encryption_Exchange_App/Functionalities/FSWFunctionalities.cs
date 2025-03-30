@@ -11,8 +11,10 @@
         private CheckBox cbCreating;
         private CheckBox cbRenaming;
         private RichTextBox rcbLog;
+        private RichTextBox rtbAppLog;
         private Label lblNumber;
         private Label lblNumberOfEncryptedFiles;
+        private Label lblLastActivity;
         private FileSystemWatcher watcher;
         private Queue<String> filesToUpload;
         private int counter = 0;
@@ -20,7 +22,8 @@
         public FSWFunctionalities(Main forma, CheckBox cbEnableDisable, CheckBox cbCreating,
             CheckBox cbDeleting, CheckBox cbRenaming, Control uiControl, ListView lvCurrentFiles,
             RadioButton rbBifid, FileSystemWatcher watcher, Queue<string> filesToUpload, 
-            RichTextBox rcbLog, Label lblNumber, Label lblNumberOfEncryptedFiles)
+            RichTextBox rcbLog, Label lblNumber, Label lblNumberOfEncryptedFiles, Label lblLastActivity, 
+            RichTextBox rtbAppLog)
         {
             this.forma = forma;
             this.cbEnableDisable = cbEnableDisable;
@@ -35,13 +38,19 @@
             this.rcbLog = rcbLog;
             this.lblNumber = lblNumber;
             this.lblNumberOfEncryptedFiles = lblNumberOfEncryptedFiles;
+            this.lblLastActivity = lblLastActivity;
+            this.rtbAppLog = rtbAppLog;
         }
 
-        private EncryptionFunctionalities encryptionFunctionalities = new EncryptionFunctionalities(null, null);
+        private EncryptionFunctionalities encryptionFunctionalities = new EncryptionFunctionalities(null, null, null, null);
         private GlobalFunctionalities globalFunctionalities = new GlobalFunctionalities();
 
         private static string folderFSWPath1 = @"C:\Users\Windows\Desktop\Target";
 
+        public void SetTargetDirectory(string targetDirectory) 
+        {
+            folderFSWPath1 = targetDirectory;
+        }
         public void btnUploadFolder()
         {
             EmptyQueue();
@@ -168,6 +177,9 @@
             bool EncryptedDecrypted = true;
             bool FSWActive = this.cbEnableDisable.Checked;
             bool rbChecked;
+            bool extension;
+            string labelText = string.Empty;
+            string appLogText = string.Empty;
             if (this.rbBifid.Checked == true)
                 rbChecked = false;
             else
@@ -184,12 +196,21 @@
             lblNumber.Text = counter.ToString();
             encryptionFunctionalities.HandleNewFile(e.FullPath, EncryptedDecrypted, null, rbChecked, FSWActive);
             UpdateLabel(e.FullPath);
-            globalFunctionalities.FillTheLog(rcbLog, fileInfo.CreationTime.ToString(), $"Created file: {fileInfo.Name}", null,  true);
+            extension = globalFunctionalities.CheckExtension(e.FullPath, rbBifid);
+            if (rbBifid.Checked == true && extension == true)
+                labelText = $"File {e.FullPath} created and encrypted using Bifid cypher";
+            else if (rbBifid.Checked == true && extension == false)
+                labelText = $"File {e.FullPath} created but can not be encrypted using Bifid cypher because it is not txt file";
+            else
+                labelText = $"File {e.FullPath} created and encrypted using RC6 + OFB algorithm";
+            globalFunctionalities.FillTheLog(rtbAppLog, rcbLog, fileInfo.CreationTime.ToString(), $"Created file: {fileInfo.Name}", labelText,  true);
+            globalFunctionalities.SetLabelText(lblLastActivity, labelText);
         }
         private void Watcher_ChangedFileName(object sender, RenamedEventArgs e)
         {
             string oldfile = Path.GetFileName(e.OldFullPath);
             string newfile = Path.GetFileName(e.FullPath);
+            string labelText = string.Empty;
             DateTime currentTime = DateTime.Now;
             string formattedTime = currentTime.ToString("HH:mm:ss");
             Queue<string> updatedQueue = new Queue<string>();
@@ -212,7 +233,9 @@
             ShowQueue();
             counter += 1;
             lblNumber.Text = counter.ToString();
-            globalFunctionalities.FillTheLog(rcbLog, formattedTime, $"Changed file name: from {oldfile} to {newfile}", null, true);
+            labelText = $"File {oldfile} changed name to {newfile}";
+            globalFunctionalities.FillTheLog(rtbAppLog, rcbLog, formattedTime, $"Changed file name: from {oldfile} to {newfile}", labelText, null, true);
+            globalFunctionalities.SetLabelText(lblLastActivity, labelText);
         }
         private void Watcher_Deleted(object sender, FileSystemEventArgs e)
         {
@@ -221,6 +244,7 @@
             Queue<string> updatedQueue = new Queue<string>();
             DateTime currentTime = DateTime.Now;
             string formattedTime = currentTime.ToString("HH:mm:ss");
+            string labelText = string.Empty;
 
             while (filesToUpload.Count > 0)
             {
@@ -236,7 +260,9 @@
             ShowQueue();
             counter += 1;
             lblNumber.Text = counter.ToString();
-            globalFunctionalities.FillTheLog(rcbLog, formattedTime, $"Deleted file: {fileInfo.Name}",null, true);
+            labelText = $"File {e.FullPath} was removed from the default Target folder, or folder of your choice";
+            globalFunctionalities.FillTheLog(rtbAppLog, rcbLog, formattedTime, $"Deleted file: {fileInfo.Name}", labelText, null, true);
+            globalFunctionalities.SetLabelText(lblLastActivity, labelText);
         }
         private bool FileLoaded(FileInfo file)
         {

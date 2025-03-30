@@ -9,10 +9,15 @@
         List<int> rows = new List<int>();
         List<int> cols = new List<int>();
         List<int> code = new List<int>();
-        List<char> letters = new List<char>(alphabet); 
+        List<char> letters = new List<char>(alphabet);
+        GlobalFunctionalities globalFunctionalities = new GlobalFunctionalities();
         #endregion
 
         #region BifidEnkripcija/Dekripcija
+        public void SetXDirectory(string xDirectory)
+        {
+            folderFSWPath = xDirectory;
+        }
         public char[,] generateSquare()
         {
             letters = new List<char>(alphabet);

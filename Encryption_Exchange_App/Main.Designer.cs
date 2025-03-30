@@ -81,7 +81,6 @@
             rtbAppLog = new RichTextBox();
             groupBox8 = new GroupBox();
             lblLastActivity = new Label();
-            label10 = new Label();
             lblNumberOfDecryptedFiles = new Label();
             label9 = new Label();
             lblNumberOfEncryptedFiles = new Label();
@@ -107,6 +106,10 @@
             btnStartListening = new Button();
             tabTCPSettingsPage = new TabPage();
             checkedListBox1 = new CheckedListBox();
+            btnChoseTargetFolder = new Button();
+            btnChoseXFolder = new Button();
+            lblTargetFolder = new Label();
+            lblOutputXFolder = new Label();
             menuStrip1.SuspendLayout();
             tabFSWSettingsPage.SuspendLayout();
             groupBox6.SuspendLayout();
@@ -590,6 +593,10 @@
             // 
             // tabMainPage
             // 
+            tabMainPage.Controls.Add(lblOutputXFolder);
+            tabMainPage.Controls.Add(lblTargetFolder);
+            tabMainPage.Controls.Add(btnChoseXFolder);
+            tabMainPage.Controls.Add(btnChoseTargetFolder);
             tabMainPage.Controls.Add(groupBox9);
             tabMainPage.Controls.Add(groupBox8);
             tabMainPage.Location = new Point(4, 29);
@@ -621,7 +628,6 @@
             // groupBox8
             // 
             groupBox8.Controls.Add(lblLastActivity);
-            groupBox8.Controls.Add(label10);
             groupBox8.Controls.Add(lblNumberOfDecryptedFiles);
             groupBox8.Controls.Add(label9);
             groupBox8.Controls.Add(lblNumberOfEncryptedFiles);
@@ -638,20 +644,11 @@
             // lblLastActivity
             // 
             lblLastActivity.AutoSize = true;
-            lblLastActivity.Location = new Point(105, 87);
+            lblLastActivity.Location = new Point(6, 86);
             lblLastActivity.Name = "lblLastActivity";
-            lblLastActivity.Size = new Size(58, 20);
+            lblLastActivity.Size = new Size(89, 20);
             lblLastActivity.TabIndex = 8;
-            lblLastActivity.Text = "label12";
-            // 
-            // label10
-            // 
-            label10.AutoSize = true;
-            label10.Location = new Point(6, 87);
-            label10.Name = "label10";
-            label10.Size = new Size(93, 20);
-            label10.TabIndex = 7;
-            label10.Text = "Last activity: ";
+            lblLastActivity.Text = "Last activity:";
             // 
             // lblNumberOfDecryptedFiles
             // 
@@ -903,6 +900,44 @@
             checkedListBox1.Size = new Size(150, 114);
             checkedListBox1.TabIndex = 0;
             // 
+            // btnChoseTargetFolder
+            // 
+            btnChoseTargetFolder.Location = new Point(6, 151);
+            btnChoseTargetFolder.Name = "btnChoseTargetFolder";
+            btnChoseTargetFolder.Size = new Size(149, 29);
+            btnChoseTargetFolder.TabIndex = 2;
+            btnChoseTargetFolder.Text = "Chose target folder";
+            btnChoseTargetFolder.UseVisualStyleBackColor = true;
+            btnChoseTargetFolder.Click += btnChoseTargetFolder_Click;
+            // 
+            // btnChoseXFolder
+            // 
+            btnChoseXFolder.Location = new Point(6, 208);
+            btnChoseXFolder.Name = "btnChoseXFolder";
+            btnChoseXFolder.Size = new Size(149, 29);
+            btnChoseXFolder.TabIndex = 3;
+            btnChoseXFolder.Text = "Chose X folder";
+            btnChoseXFolder.UseVisualStyleBackColor = true;
+            btnChoseXFolder.Click += btnChoseXFolder_Click;
+            // 
+            // lblTargetFolder
+            // 
+            lblTargetFolder.AutoSize = true;
+            lblTargetFolder.Location = new Point(173, 155);
+            lblTargetFolder.Name = "lblTargetFolder";
+            lblTargetFolder.Size = new Size(101, 20);
+            lblTargetFolder.TabIndex = 4;
+            lblTargetFolder.Text = "Target folder: ";
+            // 
+            // lblOutputXFolder
+            // 
+            lblOutputXFolder.AutoSize = true;
+            lblOutputXFolder.Location = new Point(173, 212);
+            lblOutputXFolder.Name = "lblOutputXFolder";
+            lblOutputXFolder.Size = new Size(125, 20);
+            lblOutputXFolder.TabIndex = 5;
+            lblOutputXFolder.Text = "Output (X) folder:";
+            // 
             // Main
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -931,6 +966,7 @@
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
             tabMainPage.ResumeLayout(false);
+            tabMainPage.PerformLayout();
             groupBox9.ResumeLayout(false);
             groupBox8.ResumeLayout(false);
             groupBox8.PerformLayout();
@@ -1021,8 +1057,11 @@
         private GroupBox groupBox9;
         private RichTextBox rtbAppLog;
         private Label lblLastActivity;
-        private Label label10;
         private Label lblNumberOfDecryptedFiles;
         private Label label9;
+        private Label lblOutputXFolder;
+        private Label lblTargetFolder;
+        private Button btnChoseXFolder;
+        private Button btnChoseTargetFolder;
     }
 }
