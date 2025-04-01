@@ -33,7 +33,7 @@
             List<byte> extendedInput = new List<byte>(input);
             extendedInput.Add(0x80);
 
-            byte[] byteArray = extendedInput.ToArray(); // List<byte> u byte[]
+            byte[] byteArray = extendedInput.ToArray();
             while ((extendedInput.Count * 8) % 512 != 448)
                 extendedInput.Add(0x00);
 

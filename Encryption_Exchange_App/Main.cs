@@ -6,7 +6,6 @@
         private FSWFunctionalities fSWFunctionalities;
         private TCPFunctionalities tCPFunctionalities;
         private GlobalFunctionalities globalFunctionalities;
-        private MainFunctionalities mainFunctionalities;
         private RC6OFB rc6ofb;
         private Bifid bifid;
 
@@ -26,7 +25,6 @@
             filesToUpload = new Queue<string>();
             serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-            mainFunctionalities = new MainFunctionalities();
             encryptionFunctionalities = new EncryptionFunctionalities(lblNumberOfEncryptedFiles, lblNumberOfDecryptedFiles, lblLastActivity, rtbAppLog);
             globalFunctionalities = new GlobalFunctionalities();
 
@@ -38,7 +36,7 @@
                 lblNumberOfEncryptedFiles, lblLastActivity,  rtbAppLog);
 
             tCPFunctionalities = new TCPFunctionalities(this, rbBifid, tbIPAddress, tbPort, lblClientStatus,
-                 lblServerStatus, this, serverSocket);
+                 lblServerStatus, this, serverSocket, rtbClientSettings, rtbAppLog, rtbServerSettings);
         }
 
         public void StartStyle()
@@ -68,146 +66,267 @@
             lblFileName.TextAlign = ContentAlignment.MiddleLeft;
             lblFileName.AutoEllipsis = true;
 
-            lblFSWStatus.Text = "FSW inactive   |";
-            lblEncryptingAlgoStatus.Text = "Bifid encrypting active";
+            lblLastActivity.AutoSize = false;
+            lblLastActivity.Width = 750;
+            lblLastActivity.MaximumSize = new Size(750, 20);
+            lblLastActivity.TextAlign = ContentAlignment.MiddleLeft;
+            lblLastActivity.AutoEllipsis = true;
+
+            lblFSWStatus.Text = "FSW neaktivan  |";
+            lblEncryptingAlgoStatus.Text = "Bifid enkripcija aktivna";
 
             lvCurrentFiles.View = View.Details;
-            lvCurrentFiles.Columns.Add("File names: ", lvCurrentFiles.Width, HorizontalAlignment.Left);
+            lvCurrentFiles.Columns.Add("Naziv fajlova: ", lvCurrentFiles.Width, HorizontalAlignment.Left);
         }
 
         #region Menu
         private void mainPageToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            tabControl.SelectedTab = tabMainPage;
+            try
+            {
+                tabControl.SelectedTab = tabMainPage;
+            }
+            catch (Exception ex) 
+            {
+                MessageBox.Show($"Greska: {ex.Message}");
+            }
         }
         private void encryptionSettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            tabControl.SelectedTab = tabEncryptionSettingsPage;
+            try 
+            {
+                tabControl.SelectedTab = tabEncryptionSettingsPage;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greska: {ex.Message}");
+            }
         }
         private void FSWSettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            tabControl.SelectedTab = tabFSWSettingsPage;
-        }
-        private void TCPSettingsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            tabControl.SelectedTab = tabTCPSettingsPage;
+            try 
+            {
+                tabControl.SelectedTab = tabFSWSettingsPage;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greska: {ex.Message}");
+            }
         }
         private void serverSettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            tabControl.SelectedTab = tabTCPServerSettingsPage;
+            try 
+            {
+                tabControl.SelectedTab = tabTCPServerSettingsPage;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greska: {ex.Message}");
+            }
         }
         private void clientSettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            tabControl.SelectedTab = tabTCPClientSettingsPage;
+            try 
+            {
+                tabControl.SelectedTab = tabTCPClientSettingsPage;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greska: {ex.Message}");
+            }
         }
         #endregion
 
         #region EncryptionFunctionalities
         private void btnSelectFileToEncryptDecrypt_Click_1(object sender, EventArgs e)
         {
-            encryptionFunctionalities.btnSelectFileToEncryptDecryptClick(lblFileAttributes, lblFileDateCreated,
-                lblFileDateModified, lblFileExtension, lblFileName, lblFilePath, lblFileSize, cbEnableDisable);
+            try 
+            {
+                encryptionFunctionalities.btnSelectFileToEncryptDecryptClick(lblFileAttributes, lblFileDateCreated,
+                    lblFileDateModified, lblFileExtension, lblFileName, lblFilePath, lblFileSize, cbEnableDisable);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greska: {ex.Message}");
+            }
         }
         private void btnEncryptSelectedFile_Click_1(object sender, EventArgs e)
         {
-            encryptionFunctionalities.btnEncryptSelectedFileClick(rbBifid, cbEnableDisable, rtbLog,
-                lblFileAttributes, lblFileDateCreated, lblFileDateModified, lblFileExtension, lblFileName,
-                lblFilePath, lblFileSize);
+            try 
+            {
+                encryptionFunctionalities.btnEncryptSelectedFileClick(rbBifid, cbEnableDisable, rtbLog,
+                    lblFileAttributes, lblFileDateCreated, lblFileDateModified, lblFileExtension, lblFileName,
+                    lblFilePath, lblFileSize);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greska: {ex.Message}");
+            }
         }
         private void btnDecryptSelectedFile_Click_1(object sender, EventArgs e)
         {
-            encryptionFunctionalities.btnDecryptSelectedFileClick(rbBifid, cbEnableDisable, rtbLog,
-            lblFileAttributes, lblFileDateCreated, lblFileDateModified, lblFileExtension, lblFileName,
-            lblFilePath, lblFileSize);
+            try 
+            {
+                encryptionFunctionalities.btnDecryptSelectedFileClick(rbBifid, cbEnableDisable, rtbLog,
+                    lblFileAttributes, lblFileDateCreated, lblFileDateModified, lblFileExtension, lblFileName,
+                        lblFilePath, lblFileSize);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greska: {ex.Message}");
+            }
         }
         private void rbBifid_CheckedChanged(object sender, EventArgs e)
         {
-            lblEncryptingAlgoStatus.Text = (rbBifid.Checked) ? "Bifid encrypting active" : "RC6 + OFB encrypting active";
+            try
+            {
+                lblEncryptingAlgoStatus.Text = (rbBifid.Checked) ? "Bifid encrypting active" : "RC6 + OFB encrypting active";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greska: {ex.Message}");
+            }
         }
         #endregion
 
         #region FSWFunctionalities
         private void cbEnableDisable_CheckedChanged(object sender, EventArgs e)
         {
-            if (cbEnableDisable.Checked == true)
+            try 
             {
-                lblStatus.BackColor = Color.Green;
-                lblStatus.Text = "Running";
-                lblFSWStatus.Text = "FSW active     |";
-                cbCreating.Enabled = true;
-                cbDeleting.Enabled = true;
-                cbRenaming.Enabled = true;
-                btnUploadDirectory.Enabled = true;
+                if (cbEnableDisable.Checked == true)
+                {
+                    lblStatus.BackColor = Color.Green;
+                    lblStatus.Text = "Aktivan";
+                    lblFSWStatus.Text = "FSW aktivan   |";
+                    cbCreating.Enabled = true;
+                    cbDeleting.Enabled = true;
+                    cbRenaming.Enabled = true;
+                    btnUploadDirectory.Enabled = true;
 
-                fSWFunctionalities.SetWatcher();
+                    fSWFunctionalities.SetWatcher();
+                }
+                else if (cbEnableDisable.Checked == false)
+                {
+                    lblStatus.BackColor = Color.Red;
+                    lblStatus.Text = "Stopiran";
+                    lblFSWStatus.Text = "FSW neaktivan   |";
+                    cbCreating.Enabled = false;
+                    cbDeleting.Enabled = false;
+                    cbRenaming.Enabled = false;
+                    cbCreating.Checked = false;
+                    cbDeleting.Checked = false;
+                    cbRenaming.Checked = false;
+                    btnUploadDirectory.Enabled = false;
+
+                    lvCurrentFiles.Items.Clear();
+                    fSWFunctionalities.EmptyQueue();
+                }
             }
-            else if (cbEnableDisable.Checked == false)
+            catch (Exception ex)
             {
-                lblStatus.BackColor = Color.Red;
-                lblStatus.Text = "Stopped";
-                lblFSWStatus.Text = "FSW inactive   |";
-                cbCreating.Enabled = false;
-                cbDeleting.Enabled = false;
-                cbRenaming.Enabled = false;
-                cbCreating.Checked = false;
-                cbDeleting.Checked = false;
-                cbRenaming.Checked = false;
-                btnUploadDirectory.Enabled = false;
-
-                lvCurrentFiles.Items.Clear();
-                fSWFunctionalities.EmptyQueue();
+                MessageBox.Show($"Greska: {ex.Message}");
             }
         }
         private void btnUploadDirectory_Click(object sender, EventArgs e)
         {
-            fSWFunctionalities.btnUploadFolder();
+            try 
+            {
+                fSWFunctionalities.btnUploadFolder();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greska: {ex.Message}");
+            }
         }
         private void cbCreating_CheckedChanged(object sender, EventArgs e)
         {
-            fSWFunctionalities.cbCreatingCheckChanged();
+            try 
+            {
+                fSWFunctionalities.cbCreatingCheckChanged();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greska: {ex.Message}");
+            }
         }
         private void cbDeleting_CheckedChanged(object sender, EventArgs e)
         {
-            fSWFunctionalities.cbDeletingCheckChanged();
+            try 
+            {
+                fSWFunctionalities.cbDeletingCheckChanged();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greska: {ex.Message}");
+            }
         }
         private void cbRenaming_CheckedChanged(object sender, EventArgs e)
         {
-            fSWFunctionalities.cbRenamingCheckChanged();
+            try 
+            {
+                fSWFunctionalities.cbRenamingCheckChanged();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greska: {ex.Message}");
+            }
         }
         private void pictureBox1_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("FSW folder icon, you know, a lil bit of style won't hurt ;)");
+            MessageBox.Show("FSW folder ikona, malo stila ne moze da skodi ;)");
         }
         #endregion
 
         #region TCPFunctionalities
         private void btnChoseFile_Click(object sender, EventArgs e)
         {
-            if (cbEnableDisable.Checked == false)
+            try 
             {
-                selectedFilePath = globalFunctionalities.ChoseFile();
-                this.lblChosenFile.Text = selectedFilePath;
+                if (cbEnableDisable.Checked == false)
+                {
+                    selectedFilePath = globalFunctionalities.ChoseFile();
+                    this.lblChosenFile.Text = selectedFilePath;
 
-                tCPFunctionalities.UpdateStatus(lblClientStatus, $"Odabran je fajl: {lblChosenFile.Text}");
+                    tCPFunctionalities.UpdateStatus(lblClientStatus, $"Odabran je fajl: {lblChosenFile.Text}");
+                }
+                else
+                {
+                    MessageBox.Show("FSW mora biti iskljucen");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("FSW mora biti iskljucen");
+                MessageBox.Show($"Greska: {ex.Message}");
             }
         }
         private void btnSendFile_Click(object sender, EventArgs e)
         {
-            Task task = Task.Run(() =>
+            try
             {
-                tCPFunctionalities.AdvanceKlijent(selectedFilePath);
-            });
+                Task task = Task.Run(() =>
+                {
+                    tCPFunctionalities.AdvanceKlijent(selectedFilePath);
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greska: {ex.Message}");
+            }
         }
         private void btnStartListening_Click(object sender, EventArgs e)
         {
-            Task task = Task.Run(() =>
+            try 
             {
-                tCPFunctionalities.AdvanceServer();
-            });
+                Task task = Task.Run(() =>
+                {
+                    tCPFunctionalities.AdvanceServer();
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greska: {ex.Message}");
+            }
         }
         private void btnStopListening_Click(object sender, EventArgs e)
         {
@@ -215,10 +334,13 @@
             {
                 serverSocket?.Close();
                 tCPFunctionalities.UpdateStatus(lblServerStatus, "Server je zaustavljen.");
+                globalFunctionalities.FillTheLog(rtbAppLog, null, rtbServerSettings, null, "Server je zaustavljen", null, false, true);
+
             }
             catch (Exception ex)
             {
-                tCPFunctionalities.UpdateStatus(lblServerStatus, $"Greška u prekidu slušanja: {ex.Message}");
+                tCPFunctionalities.UpdateStatus(lblServerStatus, $"Greska u prekidu slušanja: {ex.Message}");
+                globalFunctionalities.FillTheLog(rtbAppLog, null, rtbServerSettings, null, $"Greska u prekidu slusanja: {ex.Message}", null, false, true);
             }
         }
         #endregion
@@ -226,16 +348,30 @@
         #region MainFunctionalities
         private void btnChoseTargetFolder_Click(object sender, EventArgs e)
         {
-            string folderPath = globalFunctionalities.ChoseFolder();
-            fSWFunctionalities.SetTargetDirectory(folderPath);
-            lblTargetFolder.Text += folderPath;
+            try 
+            {
+                string folderPath = globalFunctionalities.ChoseFolder();
+                fSWFunctionalities.SetTargetDirectory(folderPath);
+                lblTargetFolder.Text += folderPath;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greska: {ex.Message}");
+            }
         }
         private void btnChoseXFolder_Click(object sender, EventArgs e)
         {
-            string folderPath = globalFunctionalities.ChoseFolder();
-            rc6ofb.SetXDirectory(folderPath);
-            bifid.SetXDirectory(folderPath);
-            lblOutputXFolder.Text += folderPath;
+            try 
+            {
+                string folderPath = globalFunctionalities.ChoseFolder();
+                rc6ofb.SetXDirectory(folderPath);
+                bifid.SetXDirectory(folderPath);
+                lblOutputXFolder.Text += folderPath;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greska: {ex.Message}");
+            }
         }
         #endregion
     }

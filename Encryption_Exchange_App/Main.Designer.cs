@@ -34,7 +34,6 @@
             encryptionToolStripMenuItem = new ToolStripMenuItem();
             encryptionSettingsToolStripMenuItem = new ToolStripMenuItem();
             tCPToolStripMenuItem = new ToolStripMenuItem();
-            TCPSettingsToolStripMenuItem = new ToolStripMenuItem();
             serverSettingsToolStripMenuItem = new ToolStripMenuItem();
             clientSettingsToolStripMenuItem = new ToolStripMenuItem();
             fSWToolStripMenuItem = new ToolStripMenuItem();
@@ -77,6 +76,10 @@
             rbBifid = new RadioButton();
             btnEncryptSelectedFile = new Button();
             tabMainPage = new TabPage();
+            lblOutputXFolder = new Label();
+            lblTargetFolder = new Label();
+            btnChoseXFolder = new Button();
+            btnChoseTargetFolder = new Button();
             groupBox9 = new GroupBox();
             rtbAppLog = new RichTextBox();
             groupBox8 = new GroupBox();
@@ -90,26 +93,27 @@
             label8 = new Label();
             tabControl = new TabControl();
             tabTCPClientSettingsPage = new TabPage();
-            lblClientStatus = new Label();
+            groupBox12 = new GroupBox();
+            rtbClientSettings = new RichTextBox();
+            groupBox11 = new GroupBox();
+            lblChosenFile = new Label();
             btnChoseFile = new Button();
             btnSendFile = new Button();
-            tbPort = new TextBox();
+            groupBox10 = new GroupBox();
+            label3 = new Label();
             tbIPAddress = new TextBox();
             label5 = new Label();
-            lblChosenFile = new Label();
-            label3 = new Label();
+            tbPort = new TextBox();
+            lblClientStatus = new Label();
             tabTCPServerSettingsPage = new TabPage();
-            lblServerStatus = new Label();
-            btnStopListening = new Button();
+            groupBox14 = new GroupBox();
             textBox1 = new TextBox();
             label4 = new Label();
+            lblServerStatus = new Label();
             btnStartListening = new Button();
-            tabTCPSettingsPage = new TabPage();
-            checkedListBox1 = new CheckedListBox();
-            btnChoseTargetFolder = new Button();
-            btnChoseXFolder = new Button();
-            lblTargetFolder = new Label();
-            lblOutputXFolder = new Label();
+            btnStopListening = new Button();
+            groupBox13 = new GroupBox();
+            rtbServerSettings = new RichTextBox();
             menuStrip1.SuspendLayout();
             tabFSWSettingsPage.SuspendLayout();
             groupBox6.SuspendLayout();
@@ -127,8 +131,12 @@
             groupBox8.SuspendLayout();
             tabControl.SuspendLayout();
             tabTCPClientSettingsPage.SuspendLayout();
+            groupBox12.SuspendLayout();
+            groupBox11.SuspendLayout();
+            groupBox10.SuspendLayout();
             tabTCPServerSettingsPage.SuspendLayout();
-            tabTCPSettingsPage.SuspendLayout();
+            groupBox14.SuspendLayout();
+            groupBox13.SuspendLayout();
             SuspendLayout();
             // 
             // menuStrip1
@@ -158,36 +166,29 @@
             // encryptionSettingsToolStripMenuItem
             // 
             encryptionSettingsToolStripMenuItem.Name = "encryptionSettingsToolStripMenuItem";
-            encryptionSettingsToolStripMenuItem.Size = new Size(145, 26);
-            encryptionSettingsToolStripMenuItem.Text = "Settings";
+            encryptionSettingsToolStripMenuItem.Size = new Size(174, 26);
+            encryptionSettingsToolStripMenuItem.Text = "Podesavanja";
             encryptionSettingsToolStripMenuItem.Click += encryptionSettingsToolStripMenuItem_Click;
             // 
             // tCPToolStripMenuItem
             // 
-            tCPToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { TCPSettingsToolStripMenuItem, serverSettingsToolStripMenuItem, clientSettingsToolStripMenuItem });
+            tCPToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { serverSettingsToolStripMenuItem, clientSettingsToolStripMenuItem });
             tCPToolStripMenuItem.Name = "tCPToolStripMenuItem";
             tCPToolStripMenuItem.Size = new Size(47, 24);
             tCPToolStripMenuItem.Text = "TCP";
             // 
-            // TCPSettingsToolStripMenuItem
-            // 
-            TCPSettingsToolStripMenuItem.Name = "TCPSettingsToolStripMenuItem";
-            TCPSettingsToolStripMenuItem.Size = new Size(188, 26);
-            TCPSettingsToolStripMenuItem.Text = "Settings";
-            TCPSettingsToolStripMenuItem.Click += TCPSettingsToolStripMenuItem_Click;
-            // 
             // serverSettingsToolStripMenuItem
             // 
             serverSettingsToolStripMenuItem.Name = "serverSettingsToolStripMenuItem";
-            serverSettingsToolStripMenuItem.Size = new Size(188, 26);
-            serverSettingsToolStripMenuItem.Text = "Server settings";
+            serverSettingsToolStripMenuItem.Size = new Size(243, 26);
+            serverSettingsToolStripMenuItem.Text = "Serverska podesavanja";
             serverSettingsToolStripMenuItem.Click += serverSettingsToolStripMenuItem_Click;
             // 
             // clientSettingsToolStripMenuItem
             // 
             clientSettingsToolStripMenuItem.Name = "clientSettingsToolStripMenuItem";
-            clientSettingsToolStripMenuItem.Size = new Size(188, 26);
-            clientSettingsToolStripMenuItem.Text = "Client settings";
+            clientSettingsToolStripMenuItem.Size = new Size(243, 26);
+            clientSettingsToolStripMenuItem.Text = "Klijentska podesavanja";
             clientSettingsToolStripMenuItem.Click += clientSettingsToolStripMenuItem_Click;
             // 
             // fSWToolStripMenuItem
@@ -200,8 +201,8 @@
             // FSWSettingsToolStripMenuItem
             // 
             FSWSettingsToolStripMenuItem.Name = "FSWSettingsToolStripMenuItem";
-            FSWSettingsToolStripMenuItem.Size = new Size(145, 26);
-            FSWSettingsToolStripMenuItem.Text = "Settings";
+            FSWSettingsToolStripMenuItem.Size = new Size(174, 26);
+            FSWSettingsToolStripMenuItem.Text = "Podesavanja";
             FSWSettingsToolStripMenuItem.Click += FSWSettingsToolStripMenuItem_Click;
             // 
             // tabFSWSettingsPage
@@ -228,7 +229,7 @@
             groupBox6.Controls.Add(lblStatus);
             groupBox6.Location = new Point(12, 289);
             groupBox6.Name = "groupBox6";
-            groupBox6.Size = new Size(462, 75);
+            groupBox6.Size = new Size(484, 75);
             groupBox6.TabIndex = 20;
             groupBox6.TabStop = false;
             groupBox6.Text = "Status";
@@ -236,25 +237,25 @@
             // lblNumber
             // 
             lblNumber.AutoSize = true;
-            lblNumber.Location = new Point(376, 37);
+            lblNumber.Location = new Point(384, 37);
             lblNumber.Name = "lblNumber";
-            lblNumber.Size = new Size(69, 20);
+            lblNumber.Size = new Size(45, 20);
             lblNumber.TabIndex = 4;
-            lblNumber.Text = "number...";
+            lblNumber.Text = "broj...";
             // 
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new Point(216, 37);
+            label7.Location = new Point(274, 37);
             label7.Name = "label7";
-            label7.Size = new Size(142, 20);
+            label7.Size = new Size(103, 20);
             label7.TabIndex = 3;
-            label7.Text = "Number of changes:";
+            label7.Text = "Broj promena:";
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(28, 37);
+            label1.Location = new Point(63, 37);
             label1.Name = "label1";
             label1.Size = new Size(87, 20);
             label1.TabIndex = 1;
@@ -263,7 +264,7 @@
             // lblStatus
             // 
             lblStatus.AutoSize = true;
-            lblStatus.Location = new Point(121, 37);
+            lblStatus.Location = new Point(156, 37);
             lblStatus.Name = "lblStatus";
             lblStatus.Size = new Size(56, 20);
             lblStatus.TabIndex = 2;
@@ -274,7 +275,7 @@
             groupBox5.Controls.Add(rcbLog);
             groupBox5.Location = new Point(12, 158);
             groupBox5.Name = "groupBox5";
-            groupBox5.Size = new Size(464, 125);
+            groupBox5.Size = new Size(484, 125);
             groupBox5.TabIndex = 19;
             groupBox5.TabStop = false;
             groupBox5.Text = "Log";
@@ -283,7 +284,7 @@
             // 
             rcbLog.Location = new Point(6, 26);
             rcbLog.Name = "rcbLog";
-            rcbLog.Size = new Size(452, 83);
+            rcbLog.Size = new Size(472, 83);
             rcbLog.TabIndex = 0;
             rcbLog.Text = "";
             // 
@@ -337,7 +338,7 @@
             groupBox3.Controls.Add(cbCreating);
             groupBox3.Location = new Point(12, 79);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(464, 73);
+            groupBox3.Size = new Size(484, 73);
             groupBox3.TabIndex = 16;
             groupBox3.TabStop = false;
             groupBox3.Text = "Tracking";
@@ -347,52 +348,52 @@
             cbEnableDisable.AutoSize = true;
             cbEnableDisable.Location = new Point(6, 26);
             cbEnableDisable.Name = "cbEnableDisable";
-            cbEnableDisable.Size = new Size(165, 24);
+            cbEnableDisable.Size = new Size(158, 24);
             cbEnableDisable.TabIndex = 0;
-            cbEnableDisable.Text = "Enable/Disable FSW";
+            cbEnableDisable.Text = "Ukljuci/Iskljuci FSW";
             cbEnableDisable.UseVisualStyleBackColor = true;
             cbEnableDisable.CheckedChanged += cbEnableDisable_CheckedChanged;
             // 
             // cbRenaming
             // 
             cbRenaming.AutoSize = true;
-            cbRenaming.Location = new Point(364, 26);
+            cbRenaming.Location = new Point(349, 26);
             cbRenaming.Name = "cbRenaming";
-            cbRenaming.Size = new Size(98, 24);
+            cbRenaming.Size = new Size(129, 24);
             cbRenaming.TabIndex = 9;
-            cbRenaming.Text = "Renaming";
+            cbRenaming.Text = "Preimenovanje";
             cbRenaming.UseVisualStyleBackColor = true;
             cbRenaming.CheckedChanged += cbRenaming_CheckedChanged;
             // 
             // cbDeleting
             // 
             cbDeleting.AutoSize = true;
-            cbDeleting.Location = new Point(270, 26);
+            cbDeleting.Location = new Point(260, 26);
             cbDeleting.Name = "cbDeleting";
-            cbDeleting.Size = new Size(88, 24);
+            cbDeleting.Size = new Size(83, 24);
             cbDeleting.TabIndex = 8;
-            cbDeleting.Text = "Deleting";
+            cbDeleting.Text = "Brisanje";
             cbDeleting.UseVisualStyleBackColor = true;
             cbDeleting.CheckedChanged += cbDeleting_CheckedChanged;
             // 
             // cbCreating
             // 
             cbCreating.AutoSize = true;
-            cbCreating.Location = new Point(177, 26);
+            cbCreating.Location = new Point(164, 26);
             cbCreating.Name = "cbCreating";
-            cbCreating.Size = new Size(87, 24);
+            cbCreating.Size = new Size(90, 24);
             cbCreating.TabIndex = 7;
-            cbCreating.Text = "Creating";
+            cbCreating.Text = "Kreiranje";
             cbCreating.UseVisualStyleBackColor = true;
             cbCreating.CheckedChanged += cbCreating_CheckedChanged;
             // 
             // btnUploadDirectory
             // 
-            btnUploadDirectory.Location = new Point(563, 358);
+            btnUploadDirectory.Location = new Point(550, 358);
             btnUploadDirectory.Name = "btnUploadDirectory";
-            btnUploadDirectory.Size = new Size(146, 29);
+            btnUploadDirectory.Size = new Size(167, 29);
             btnUploadDirectory.TabIndex = 15;
-            btnUploadDirectory.Text = "Upload directory";
+            btnUploadDirectory.Text = "Odaberite direktorijum";
             btnUploadDirectory.UseVisualStyleBackColor = true;
             btnUploadDirectory.Click += btnUploadDirectory_Click;
             // 
@@ -404,7 +405,7 @@
             gbFilesInTheDirectory.Size = new Size(263, 258);
             gbFilesInTheDirectory.TabIndex = 14;
             gbFilesInTheDirectory.TabStop = false;
-            gbFilesInTheDirectory.Text = "Current files in the target directory ";
+            gbFilesInTheDirectory.Text = "Trenutni fajlovi ";
             // 
             // lvCurrentFiles
             // 
@@ -457,18 +458,18 @@
             groupBox1.Controls.Add(lblFileName);
             groupBox1.Location = new Point(6, 3);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(525, 193);
+            groupBox1.Size = new Size(525, 211);
             groupBox1.TabIndex = 4;
             groupBox1.TabStop = false;
-            groupBox1.Text = "Select and encrypt";
+            groupBox1.Text = "Odaberite i kriptujte";
             // 
             // btnSelectFileToEncryptDecrypt
             // 
-            btnSelectFileToEncryptDecrypt.Location = new Point(141, 158);
+            btnSelectFileToEncryptDecrypt.Location = new Point(109, 176);
             btnSelectFileToEncryptDecrypt.Name = "btnSelectFileToEncryptDecrypt";
-            btnSelectFileToEncryptDecrypt.Size = new Size(216, 29);
+            btnSelectFileToEncryptDecrypt.Size = new Size(320, 29);
             btnSelectFileToEncryptDecrypt.TabIndex = 21;
-            btnSelectFileToEncryptDecrypt.Text = "Select file to encrypt/decrypt";
+            btnSelectFileToEncryptDecrypt.Text = "Odaberite fajl za kriptovanje/dekriptovanje";
             btnSelectFileToEncryptDecrypt.UseVisualStyleBackColor = true;
             btnSelectFileToEncryptDecrypt.Click += btnSelectFileToEncryptDecrypt_Click_1;
             // 
@@ -477,63 +478,63 @@
             lblFileSize.AutoSize = true;
             lblFileSize.Location = new Point(6, 83);
             lblFileSize.Name = "lblFileSize";
-            lblFileSize.Size = new Size(68, 20);
+            lblFileSize.Size = new Size(96, 20);
             lblFileSize.TabIndex = 17;
-            lblFileSize.Text = "File size: ";
+            lblFileSize.Text = "Velicina fajla:";
             // 
             // lblFileAttributes
             // 
             lblFileAttributes.AutoSize = true;
             lblFileAttributes.Location = new Point(330, 83);
             lblFileAttributes.Name = "lblFileAttributes";
-            lblFileAttributes.Size = new Size(77, 20);
+            lblFileAttributes.Size = new Size(62, 20);
             lblFileAttributes.TabIndex = 15;
-            lblFileAttributes.Text = "Attributes:";
+            lblFileAttributes.Text = "Atributi:";
             // 
             // lblFileDateModified
             // 
             lblFileDateModified.AutoSize = true;
-            lblFileDateModified.Location = new Point(258, 110);
+            lblFileDateModified.Location = new Point(6, 141);
             lblFileDateModified.Name = "lblFileDateModified";
-            lblFileDateModified.Size = new Size(109, 20);
+            lblFileDateModified.Size = new Size(143, 20);
             lblFileDateModified.TabIndex = 18;
-            lblFileDateModified.Text = "Date Modified:";
+            lblFileDateModified.Text = "Datum modifikacije:";
             // 
             // lblFileDateCreated
             // 
             lblFileDateCreated.AutoSize = true;
             lblFileDateCreated.Location = new Point(6, 110);
             lblFileDateCreated.Name = "lblFileDateCreated";
-            lblFileDateCreated.Size = new Size(98, 20);
+            lblFileDateCreated.Size = new Size(118, 20);
             lblFileDateCreated.TabIndex = 19;
-            lblFileDateCreated.Text = "Date created:";
+            lblFileDateCreated.Text = "Datum kreiranja:";
             // 
             // lblFileExtension
             // 
             lblFileExtension.AutoSize = true;
             lblFileExtension.Location = new Point(178, 83);
             lblFileExtension.Name = "lblFileExtension";
-            lblFileExtension.Size = new Size(75, 20);
+            lblFileExtension.Size = new Size(77, 20);
             lblFileExtension.TabIndex = 20;
-            lblFileExtension.Text = "Extension:";
+            lblFileExtension.Text = "Ekstenzija:";
             // 
             // lblFilePath
             // 
             lblFilePath.AutoSize = true;
             lblFilePath.Location = new Point(6, 23);
             lblFilePath.Name = "lblFilePath";
-            lblFilePath.Size = new Size(44, 20);
+            lblFilePath.Size = new Size(65, 20);
             lblFilePath.TabIndex = 14;
-            lblFilePath.Text = "Path: ";
+            lblFilePath.Text = "Putanja: ";
             // 
             // lblFileName
             // 
             lblFileName.AutoSize = true;
             lblFileName.Location = new Point(6, 52);
             lblFileName.Name = "lblFileName";
-            lblFileName.Size = new Size(80, 20);
+            lblFileName.Size = new Size(70, 20);
             lblFileName.TabIndex = 16;
-            lblFileName.Text = "File name: ";
+            lblFileName.Text = "Ime fajla:";
             // 
             // groupBox2
             // 
@@ -543,25 +544,25 @@
             groupBox2.Controls.Add(btnEncryptSelectedFile);
             groupBox2.Location = new Point(537, 3);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(225, 193);
+            groupBox2.Size = new Size(225, 211);
             groupBox2.TabIndex = 3;
             groupBox2.TabStop = false;
-            groupBox2.Text = "Pick the encryption algorithm ";
+            groupBox2.Text = "Odaberite algoritam ";
             // 
             // btnDecryptSelectedFile
             // 
-            btnDecryptSelectedFile.Location = new Point(125, 158);
+            btnDecryptSelectedFile.Location = new Point(106, 176);
             btnDecryptSelectedFile.Name = "btnDecryptSelectedFile";
-            btnDecryptSelectedFile.Size = new Size(94, 29);
+            btnDecryptSelectedFile.Size = new Size(113, 29);
             btnDecryptSelectedFile.TabIndex = 23;
-            btnDecryptSelectedFile.Text = "Decrypt file";
+            btnDecryptSelectedFile.Text = "Dekriptuj fajl";
             btnDecryptSelectedFile.UseVisualStyleBackColor = true;
             btnDecryptSelectedFile.Click += btnDecryptSelectedFile_Click_1;
             // 
             // rbRC6OFB
             // 
             rbRC6OFB.AutoSize = true;
-            rbRC6OFB.Location = new Point(6, 78);
+            rbRC6OFB.Location = new Point(6, 106);
             rbRC6OFB.Name = "rbRC6OFB";
             rbRC6OFB.Size = new Size(101, 24);
             rbRC6OFB.TabIndex = 1;
@@ -583,11 +584,11 @@
             // 
             // btnEncryptSelectedFile
             // 
-            btnEncryptSelectedFile.Location = new Point(6, 158);
+            btnEncryptSelectedFile.Location = new Point(6, 176);
             btnEncryptSelectedFile.Name = "btnEncryptSelectedFile";
             btnEncryptSelectedFile.Size = new Size(94, 29);
             btnEncryptSelectedFile.TabIndex = 22;
-            btnEncryptSelectedFile.Text = "Encrypt file";
+            btnEncryptSelectedFile.Text = "Kriptuj fajl";
             btnEncryptSelectedFile.UseVisualStyleBackColor = true;
             btnEncryptSelectedFile.Click += btnEncryptSelectedFile_Click_1;
             // 
@@ -606,6 +607,44 @@
             tabMainPage.TabIndex = 0;
             tabMainPage.Text = "Main page";
             tabMainPage.UseVisualStyleBackColor = true;
+            // 
+            // lblOutputXFolder
+            // 
+            lblOutputXFolder.AutoSize = true;
+            lblOutputXFolder.Location = new Point(198, 212);
+            lblOutputXFolder.Name = "lblOutputXFolder";
+            lblOutputXFolder.Size = new Size(65, 20);
+            lblOutputXFolder.TabIndex = 5;
+            lblOutputXFolder.Text = "X folder:";
+            // 
+            // lblTargetFolder
+            // 
+            lblTargetFolder.AutoSize = true;
+            lblTargetFolder.Location = new Point(198, 155);
+            lblTargetFolder.Name = "lblTargetFolder";
+            lblTargetFolder.Size = new Size(101, 20);
+            lblTargetFolder.TabIndex = 4;
+            lblTargetFolder.Text = "Target folder: ";
+            // 
+            // btnChoseXFolder
+            // 
+            btnChoseXFolder.Location = new Point(6, 208);
+            btnChoseXFolder.Name = "btnChoseXFolder";
+            btnChoseXFolder.Size = new Size(186, 29);
+            btnChoseXFolder.TabIndex = 3;
+            btnChoseXFolder.Text = "Odaberite X folder";
+            btnChoseXFolder.UseVisualStyleBackColor = true;
+            btnChoseXFolder.Click += btnChoseXFolder_Click;
+            // 
+            // btnChoseTargetFolder
+            // 
+            btnChoseTargetFolder.Location = new Point(6, 151);
+            btnChoseTargetFolder.Name = "btnChoseTargetFolder";
+            btnChoseTargetFolder.Size = new Size(186, 29);
+            btnChoseTargetFolder.TabIndex = 2;
+            btnChoseTargetFolder.Text = "Odaberite Target folder";
+            btnChoseTargetFolder.UseVisualStyleBackColor = true;
+            btnChoseTargetFolder.Click += btnChoseTargetFolder_Click;
             // 
             // groupBox9
             // 
@@ -646,9 +685,9 @@
             lblLastActivity.AutoSize = true;
             lblLastActivity.Location = new Point(6, 86);
             lblLastActivity.Name = "lblLastActivity";
-            lblLastActivity.Size = new Size(89, 20);
+            lblLastActivity.Size = new Size(138, 20);
             lblLastActivity.TabIndex = 8;
-            lblLastActivity.Text = "Last activity:";
+            lblLastActivity.Text = "Poslednja aktivnost:";
             // 
             // lblNumberOfDecryptedFiles
             // 
@@ -664,14 +703,14 @@
             label9.AutoSize = true;
             label9.Location = new Point(6, 55);
             label9.Name = "label9";
-            label9.Size = new Size(190, 20);
+            label9.Size = new Size(180, 20);
             label9.TabIndex = 5;
-            label9.Text = "Number of decrypted files: ";
+            label9.Text = "Broj dekriptovanih fajlova";
             // 
             // lblNumberOfEncryptedFiles
             // 
             lblNumberOfEncryptedFiles.AutoSize = true;
-            lblNumberOfEncryptedFiles.Location = new Point(614, 23);
+            lblNumberOfEncryptedFiles.Location = new Point(640, 23);
             lblNumberOfEncryptedFiles.Name = "lblNumberOfEncryptedFiles";
             lblNumberOfEncryptedFiles.Size = new Size(17, 20);
             lblNumberOfEncryptedFiles.TabIndex = 4;
@@ -680,29 +719,29 @@
             // label11
             // 
             label11.AutoSize = true;
-            label11.Location = new Point(419, 23);
+            label11.Location = new Point(455, 23);
             label11.Name = "label11";
-            label11.Size = new Size(189, 20);
+            label11.Size = new Size(179, 20);
             label11.TabIndex = 3;
-            label11.Text = "Number of encrypted files: ";
+            label11.Text = "Broj enkriptovanih fajlova";
             // 
             // lblEncryptingAlgoStatus
             // 
             lblEncryptingAlgoStatus.AutoSize = true;
-            lblEncryptingAlgoStatus.Location = new Point(183, 23);
+            lblEncryptingAlgoStatus.Location = new Point(207, 23);
             lblEncryptingAlgoStatus.Name = "lblEncryptingAlgoStatus";
-            lblEncryptingAlgoStatus.Size = new Size(197, 20);
+            lblEncryptingAlgoStatus.Size = new Size(210, 20);
             lblEncryptingAlgoStatus.TabIndex = 2;
-            lblEncryptingAlgoStatus.Text = "RC6 + OFB encrypting active";
+            lblEncryptingAlgoStatus.Text = "RC6 + OFB kriptovanje aktivno";
             // 
             // lblFSWStatus
             // 
             lblFSWStatus.AutoSize = true;
             lblFSWStatus.Location = new Point(68, 23);
             lblFSWStatus.Name = "lblFSWStatus";
-            lblFSWStatus.Size = new Size(109, 20);
+            lblFSWStatus.Size = new Size(133, 20);
             lblFSWStatus.TabIndex = 1;
-            lblFSWStatus.Text = "FSW inactive   |";
+            lblFSWStatus.Text = "FSW nije aktivan   |";
             // 
             // label8
             // 
@@ -720,7 +759,6 @@
             tabControl.Controls.Add(tabFSWSettingsPage);
             tabControl.Controls.Add(tabTCPClientSettingsPage);
             tabControl.Controls.Add(tabTCPServerSettingsPage);
-            tabControl.Controls.Add(tabTCPSettingsPage);
             tabControl.Location = new Point(12, 31);
             tabControl.Name = "tabControl";
             tabControl.SelectedIndex = 0;
@@ -729,14 +767,10 @@
             // 
             // tabTCPClientSettingsPage
             // 
+            tabTCPClientSettingsPage.Controls.Add(groupBox12);
+            tabTCPClientSettingsPage.Controls.Add(groupBox11);
+            tabTCPClientSettingsPage.Controls.Add(groupBox10);
             tabTCPClientSettingsPage.Controls.Add(lblClientStatus);
-            tabTCPClientSettingsPage.Controls.Add(btnChoseFile);
-            tabTCPClientSettingsPage.Controls.Add(btnSendFile);
-            tabTCPClientSettingsPage.Controls.Add(tbPort);
-            tabTCPClientSettingsPage.Controls.Add(tbIPAddress);
-            tabTCPClientSettingsPage.Controls.Add(label5);
-            tabTCPClientSettingsPage.Controls.Add(lblChosenFile);
-            tabTCPClientSettingsPage.Controls.Add(label3);
             tabTCPClientSettingsPage.Location = new Point(4, 29);
             tabTCPClientSettingsPage.Name = "tabTCPClientSettingsPage";
             tabTCPClientSettingsPage.Padding = new Padding(3);
@@ -745,47 +779,88 @@
             tabTCPClientSettingsPage.Text = "TCP client settings";
             tabTCPClientSettingsPage.UseVisualStyleBackColor = true;
             // 
-            // lblClientStatus
+            // groupBox12
             // 
-            lblClientStatus.AutoSize = true;
-            lblClientStatus.Location = new Point(216, 264);
-            lblClientStatus.Name = "lblClientStatus";
-            lblClientStatus.Size = new Size(49, 20);
-            lblClientStatus.TabIndex = 7;
-            lblClientStatus.Text = "Status";
+            groupBox12.Controls.Add(rtbClientSettings);
+            groupBox12.Location = new Point(6, 260);
+            groupBox12.Name = "groupBox12";
+            groupBox12.Size = new Size(753, 125);
+            groupBox12.TabIndex = 11;
+            groupBox12.TabStop = false;
+            groupBox12.Text = "Log";
+            // 
+            // rtbClientSettings
+            // 
+            rtbClientSettings.Location = new Point(6, 19);
+            rtbClientSettings.Name = "rtbClientSettings";
+            rtbClientSettings.Size = new Size(741, 100);
+            rtbClientSettings.TabIndex = 10;
+            rtbClientSettings.Text = "";
+            // 
+            // groupBox11
+            // 
+            groupBox11.Controls.Add(lblChosenFile);
+            groupBox11.Controls.Add(btnChoseFile);
+            groupBox11.Controls.Add(btnSendFile);
+            groupBox11.Location = new Point(6, 101);
+            groupBox11.Name = "groupBox11";
+            groupBox11.Size = new Size(756, 91);
+            groupBox11.TabIndex = 9;
+            groupBox11.TabStop = false;
+            // 
+            // lblChosenFile
+            // 
+            lblChosenFile.AutoSize = true;
+            lblChosenFile.Location = new Point(6, 23);
+            lblChosenFile.Name = "lblChosenFile";
+            lblChosenFile.Size = new Size(95, 20);
+            lblChosenFile.TabIndex = 1;
+            lblChosenFile.Text = "Odabran fajl:";
             // 
             // btnChoseFile
             // 
-            btnChoseFile.Location = new Point(74, 202);
+            btnChoseFile.Location = new Point(197, 56);
             btnChoseFile.Name = "btnChoseFile";
-            btnChoseFile.Size = new Size(94, 29);
+            btnChoseFile.Size = new Size(107, 29);
             btnChoseFile.TabIndex = 6;
-            btnChoseFile.Text = "Chose file";
+            btnChoseFile.Text = "Odaberi fajl";
             btnChoseFile.UseVisualStyleBackColor = true;
             btnChoseFile.Click += btnChoseFile_Click;
             // 
             // btnSendFile
             // 
-            btnSendFile.Location = new Point(74, 260);
+            btnSendFile.Location = new Point(412, 56);
             btnSendFile.Name = "btnSendFile";
-            btnSendFile.Size = new Size(94, 29);
+            btnSendFile.Size = new Size(106, 29);
             btnSendFile.TabIndex = 5;
-            btnSendFile.Text = "Send file";
+            btnSendFile.Text = "Posalji fajl";
             btnSendFile.UseVisualStyleBackColor = true;
             btnSendFile.Click += btnSendFile_Click;
             // 
-            // tbPort
+            // groupBox10
             // 
-            tbPort.Location = new Point(216, 147);
-            tbPort.Name = "tbPort";
-            tbPort.Size = new Size(125, 27);
-            tbPort.TabIndex = 4;
-            tbPort.Text = "5000";
-            tbPort.TextAlign = HorizontalAlignment.Center;
+            groupBox10.Controls.Add(label3);
+            groupBox10.Controls.Add(tbIPAddress);
+            groupBox10.Controls.Add(label5);
+            groupBox10.Controls.Add(tbPort);
+            groupBox10.Location = new Point(3, 6);
+            groupBox10.Name = "groupBox10";
+            groupBox10.Size = new Size(759, 70);
+            groupBox10.TabIndex = 8;
+            groupBox10.TabStop = false;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(6, 31);
+            label3.Name = "label3";
+            label3.Size = new Size(72, 20);
+            label3.TabIndex = 0;
+            label3.Text = "IP adresa:";
             // 
             // tbIPAddress
             // 
-            tbIPAddress.Location = new Point(216, 92);
+            tbIPAddress.Location = new Point(91, 28);
             tbIPAddress.Name = "tbIPAddress";
             tbIPAddress.Size = new Size(125, 27);
             tbIPAddress.TabIndex = 3;
@@ -795,37 +870,34 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(74, 150);
+            label5.Location = new Point(287, 31);
             label5.Name = "label5";
             label5.Size = new Size(38, 20);
             label5.TabIndex = 2;
             label5.Text = "Port:";
             // 
-            // lblChosenFile
+            // tbPort
             // 
-            lblChosenFile.AutoSize = true;
-            lblChosenFile.Location = new Point(216, 206);
-            lblChosenFile.Name = "lblChosenFile";
-            lblChosenFile.Size = new Size(82, 20);
-            lblChosenFile.TabIndex = 1;
-            lblChosenFile.Text = "Chosen file";
+            tbPort.Location = new Point(331, 28);
+            tbPort.Name = "tbPort";
+            tbPort.Size = new Size(125, 27);
+            tbPort.TabIndex = 4;
+            tbPort.Text = "5000";
+            tbPort.TextAlign = HorizontalAlignment.Center;
             // 
-            // label3
+            // lblClientStatus
             // 
-            label3.AutoSize = true;
-            label3.Location = new Point(74, 95);
-            label3.Name = "label3";
-            label3.Size = new Size(79, 20);
-            label3.TabIndex = 0;
-            label3.Text = "IP address:";
+            lblClientStatus.AutoSize = true;
+            lblClientStatus.Location = new Point(12, 207);
+            lblClientStatus.Name = "lblClientStatus";
+            lblClientStatus.Size = new Size(52, 20);
+            lblClientStatus.TabIndex = 7;
+            lblClientStatus.Text = "Status:";
             // 
             // tabTCPServerSettingsPage
             // 
-            tabTCPServerSettingsPage.Controls.Add(lblServerStatus);
-            tabTCPServerSettingsPage.Controls.Add(btnStopListening);
-            tabTCPServerSettingsPage.Controls.Add(textBox1);
-            tabTCPServerSettingsPage.Controls.Add(label4);
-            tabTCPServerSettingsPage.Controls.Add(btnStartListening);
+            tabTCPServerSettingsPage.Controls.Add(groupBox14);
+            tabTCPServerSettingsPage.Controls.Add(groupBox13);
             tabTCPServerSettingsPage.Location = new Point(4, 29);
             tabTCPServerSettingsPage.Name = "tabTCPServerSettingsPage";
             tabTCPServerSettingsPage.Padding = new Padding(3);
@@ -834,28 +906,22 @@
             tabTCPServerSettingsPage.Text = "TCP server settings";
             tabTCPServerSettingsPage.UseVisualStyleBackColor = true;
             // 
-            // lblServerStatus
+            // groupBox14
             // 
-            lblServerStatus.AutoSize = true;
-            lblServerStatus.Location = new Point(418, 66);
-            lblServerStatus.Name = "lblServerStatus";
-            lblServerStatus.Size = new Size(49, 20);
-            lblServerStatus.TabIndex = 4;
-            lblServerStatus.Text = "Status";
-            // 
-            // btnStopListening
-            // 
-            btnStopListening.Location = new Point(364, 165);
-            btnStopListening.Name = "btnStopListening";
-            btnStopListening.Size = new Size(122, 29);
-            btnStopListening.TabIndex = 3;
-            btnStopListening.Text = "Stop listening";
-            btnStopListening.UseVisualStyleBackColor = true;
-            btnStopListening.Click += btnStopListening_Click;
+            groupBox14.Controls.Add(textBox1);
+            groupBox14.Controls.Add(label4);
+            groupBox14.Controls.Add(lblServerStatus);
+            groupBox14.Controls.Add(btnStartListening);
+            groupBox14.Controls.Add(btnStopListening);
+            groupBox14.Location = new Point(6, 6);
+            groupBox14.Name = "groupBox14";
+            groupBox14.Size = new Size(756, 125);
+            groupBox14.TabIndex = 6;
+            groupBox14.TabStop = false;
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(222, 59);
+            textBox1.Location = new Point(98, 26);
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(125, 27);
             textBox1.TabIndex = 2;
@@ -865,78 +931,58 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(135, 62);
+            label4.Location = new Point(11, 29);
             label4.Name = "label4";
             label4.Size = new Size(38, 20);
             label4.TabIndex = 1;
             label4.Text = "Port:";
             // 
+            // lblServerStatus
+            // 
+            lblServerStatus.AutoSize = true;
+            lblServerStatus.Location = new Point(11, 78);
+            lblServerStatus.Name = "lblServerStatus";
+            lblServerStatus.Size = new Size(49, 20);
+            lblServerStatus.TabIndex = 4;
+            lblServerStatus.Text = "Status";
+            // 
             // btnStartListening
             // 
-            btnStartListening.Location = new Point(93, 165);
+            btnStartListening.Location = new Point(285, 25);
             btnStartListening.Name = "btnStartListening";
-            btnStartListening.Size = new Size(120, 29);
+            btnStartListening.Size = new Size(131, 29);
             btnStartListening.TabIndex = 0;
-            btnStartListening.Text = "Start listening";
+            btnStartListening.Text = "Pokreni slusanje";
             btnStartListening.UseVisualStyleBackColor = true;
             btnStartListening.Click += btnStartListening_Click;
             // 
-            // tabTCPSettingsPage
+            // btnStopListening
             // 
-            tabTCPSettingsPage.Controls.Add(checkedListBox1);
-            tabTCPSettingsPage.Location = new Point(4, 29);
-            tabTCPSettingsPage.Name = "tabTCPSettingsPage";
-            tabTCPSettingsPage.Padding = new Padding(3);
-            tabTCPSettingsPage.Size = new Size(768, 392);
-            tabTCPSettingsPage.TabIndex = 6;
-            tabTCPSettingsPage.Text = "TCP settings";
-            tabTCPSettingsPage.UseVisualStyleBackColor = true;
+            btnStopListening.Location = new Point(481, 25);
+            btnStopListening.Name = "btnStopListening";
+            btnStopListening.Size = new Size(122, 29);
+            btnStopListening.TabIndex = 3;
+            btnStopListening.Text = "Prekini slusanje";
+            btnStopListening.UseVisualStyleBackColor = true;
+            btnStopListening.Click += btnStopListening_Click;
             // 
-            // checkedListBox1
+            // groupBox13
             // 
-            checkedListBox1.FormattingEnabled = true;
-            checkedListBox1.Location = new Point(492, 110);
-            checkedListBox1.Name = "checkedListBox1";
-            checkedListBox1.Size = new Size(150, 114);
-            checkedListBox1.TabIndex = 0;
+            groupBox13.Controls.Add(rtbServerSettings);
+            groupBox13.Location = new Point(6, 156);
+            groupBox13.Name = "groupBox13";
+            groupBox13.Size = new Size(756, 230);
+            groupBox13.TabIndex = 5;
+            groupBox13.TabStop = false;
+            groupBox13.Text = "Log";
             // 
-            // btnChoseTargetFolder
+            // rtbServerSettings
             // 
-            btnChoseTargetFolder.Location = new Point(6, 151);
-            btnChoseTargetFolder.Name = "btnChoseTargetFolder";
-            btnChoseTargetFolder.Size = new Size(149, 29);
-            btnChoseTargetFolder.TabIndex = 2;
-            btnChoseTargetFolder.Text = "Chose target folder";
-            btnChoseTargetFolder.UseVisualStyleBackColor = true;
-            btnChoseTargetFolder.Click += btnChoseTargetFolder_Click;
-            // 
-            // btnChoseXFolder
-            // 
-            btnChoseXFolder.Location = new Point(6, 208);
-            btnChoseXFolder.Name = "btnChoseXFolder";
-            btnChoseXFolder.Size = new Size(149, 29);
-            btnChoseXFolder.TabIndex = 3;
-            btnChoseXFolder.Text = "Chose X folder";
-            btnChoseXFolder.UseVisualStyleBackColor = true;
-            btnChoseXFolder.Click += btnChoseXFolder_Click;
-            // 
-            // lblTargetFolder
-            // 
-            lblTargetFolder.AutoSize = true;
-            lblTargetFolder.Location = new Point(173, 155);
-            lblTargetFolder.Name = "lblTargetFolder";
-            lblTargetFolder.Size = new Size(101, 20);
-            lblTargetFolder.TabIndex = 4;
-            lblTargetFolder.Text = "Target folder: ";
-            // 
-            // lblOutputXFolder
-            // 
-            lblOutputXFolder.AutoSize = true;
-            lblOutputXFolder.Location = new Point(173, 212);
-            lblOutputXFolder.Name = "lblOutputXFolder";
-            lblOutputXFolder.Size = new Size(125, 20);
-            lblOutputXFolder.TabIndex = 5;
-            lblOutputXFolder.Text = "Output (X) folder:";
+            rtbServerSettings.Location = new Point(6, 28);
+            rtbServerSettings.Name = "rtbServerSettings";
+            rtbServerSettings.Size = new Size(744, 196);
+            rtbServerSettings.TabIndex = 0;
+            rtbServerSettings.Text = "";
             // 
             // Main
             // 
@@ -973,9 +1019,15 @@
             tabControl.ResumeLayout(false);
             tabTCPClientSettingsPage.ResumeLayout(false);
             tabTCPClientSettingsPage.PerformLayout();
+            groupBox12.ResumeLayout(false);
+            groupBox11.ResumeLayout(false);
+            groupBox11.PerformLayout();
+            groupBox10.ResumeLayout(false);
+            groupBox10.PerformLayout();
             tabTCPServerSettingsPage.ResumeLayout(false);
-            tabTCPServerSettingsPage.PerformLayout();
-            tabTCPSettingsPage.ResumeLayout(false);
+            groupBox14.ResumeLayout(false);
+            groupBox14.PerformLayout();
+            groupBox13.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -987,7 +1039,6 @@
         private ToolStripMenuItem encryptionToolStripMenuItem;
         private ToolStripMenuItem encryptionSettingsToolStripMenuItem;
         private ToolStripMenuItem tCPToolStripMenuItem;
-        private ToolStripMenuItem TCPSettingsToolStripMenuItem;
         private ToolStripMenuItem fSWToolStripMenuItem;
         private ToolStripMenuItem FSWSettingsToolStripMenuItem;
         private TabPage tabFSWSettingsPage;
@@ -1012,8 +1063,6 @@
         private ToolStripMenuItem clientSettingsToolStripMenuItem;
         private TabPage tabTCPServerSettingsPage;
         private Button btnStartListening;
-        private TabPage tabTCPSettingsPage;
-        private CheckedListBox checkedListBox1;
         private Label label5;
         private Label lblChosenFile;
         private Label label3;
@@ -1063,5 +1112,12 @@
         private Label lblTargetFolder;
         private Button btnChoseXFolder;
         private Button btnChoseTargetFolder;
+        private GroupBox groupBox10;
+        private GroupBox groupBox11;
+        private RichTextBox rtbClientSettings;
+        private GroupBox groupBox12;
+        private GroupBox groupBox13;
+        private RichTextBox rtbServerSettings;
+        private GroupBox groupBox14;
     }
 }

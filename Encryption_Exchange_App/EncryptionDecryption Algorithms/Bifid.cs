@@ -10,7 +10,6 @@
         List<int> cols = new List<int>();
         List<int> code = new List<int>();
         List<char> letters = new List<char>(alphabet);
-        GlobalFunctionalities globalFunctionalities = new GlobalFunctionalities();
         #endregion
 
         #region BifidEnkripcija/Dekripcija
@@ -156,34 +155,42 @@
         }
         public string BifidEncryptFile(string inputFile)
         {
-            string fileContent = string.Empty;
-            string extension = Path.GetExtension(inputFile);
-            if (extension == ".txt" || extension == ".html") //ako je fajl txt
+            try
             {
-                fileContent = File.ReadAllText(inputFile);
+                string fileContent = string.Empty;
+                string extension = Path.GetExtension(inputFile);
+                if (extension == ".txt" || extension == ".html") //ako je fajl txt
+                {
+                    fileContent = File.ReadAllText(inputFile);
+                }
+                else //ako nije txt
+                {
+                    MessageBox.Show($"Fajl {inputFile} ne moze biti sifrovan jer nije .txt fajl");
+                    return null;
+                }
+                char[,] square = generateSquare();
+
+                string encryptedText = BifidEncrypt(fileContent, square);
+
+
+                string squareString = ConvertSquareToString(square);
+                string encryptedIndices = string.Empty;
+                foreach (var number in code)
+                {
+                    encryptedIndices += number;
+                }
+
+                string encryptedFile = Path.Combine(folderFSWPath, Path.GetFileName(inputFile) + ".enc");
+                File.WriteAllText(encryptedFile, squareString + Environment.NewLine + encryptedIndices + Environment.NewLine + encryptedText);
+
+                MessageBox.Show($"Fajl {inputFile} je šifrovan kao {encryptedFile}");
+                return encryptedFile;
             }
-            else //ako nije txt
+            catch (Exception ex) 
             {
-                MessageBox.Show($"Fajl {inputFile} ne moze biti sifrovan jer nije .txt fajl");
+                MessageBox.Show($"Greska: {ex.Message} - BifidEncryptFile funkcija");
                 return null;
             }
-            char[,] square = generateSquare();
-
-            string encryptedText = BifidEncrypt(fileContent, square);
-
-
-            string squareString = ConvertSquareToString(square);
-            string encryptedIndices = string.Empty;
-            foreach (var number in code)
-            {
-                encryptedIndices += number;
-            }
-
-            string encryptedFile = Path.Combine(folderFSWPath, Path.GetFileName(inputFile) + ".enc");
-            File.WriteAllText(encryptedFile, squareString + Environment.NewLine + encryptedIndices + Environment.NewLine + encryptedText);
-
-            MessageBox.Show($"Fajl {inputFile} je šifrovan kao {encryptedFile}");
-            return encryptedFile;
         }
         public void BifidDecryptFile(string encryptedFile, string savePath)
         {
@@ -212,17 +219,9 @@
                 }
 
                 string decryptedText = BifidDecrypt(code, square);
-
-                //string outputFolder = Path.GetDirectoryName(folderFSWPath1);
-                //if (!Directory.Exists(outputFolder))
-                //{
-                //    Directory.CreateDirectory(outputFolder);
-                //}
-
                 //skidam ekstenziju 
                 string originalFileName = Path.GetFileNameWithoutExtension(encryptedFile);
                 string origExtension = Path.GetExtension(originalFileName);
-                //string decryptedFile = Path.Combine(savePath, originalFileName);
                 string decryptedFile = savePath + origExtension;
 
                 File.WriteAllText(decryptedFile, decryptedText);

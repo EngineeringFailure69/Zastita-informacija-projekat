@@ -53,216 +53,300 @@
         }
         public void btnUploadFolder()
         {
-            EmptyQueue();
-            string? selectedFolder = globalFunctionalities.ChoseFolder();
-            folderFSWPath1 = selectedFolder!;
-            if (cbEnableDisable.Checked)
+            try
             {
-                lvCurrentFiles.Items.Clear();
-                SetWatcher();
+                EmptyQueue();
+                string? selectedFolder = globalFunctionalities.ChoseFolder();
+                folderFSWPath1 = selectedFolder!;
+                if (cbEnableDisable.Checked)
+                {
+                    lvCurrentFiles.Items.Clear();
+                    SetWatcher();
+                }
+            }
+            catch (Exception ex) 
+            {
+                MessageBox.Show($"Greska: {ex.Message} - btnUploadFolder funkcija");
             }
         }
         public void cbCreatingCheckChanged() 
         {
-            if (cbEnableDisable.Checked == true && cbCreating.Checked == true)
+            try
             {
-                EmptyQueue();
-                SetWatcher();
+                if (cbEnableDisable.Checked == true && cbCreating.Checked == true)
+                {
+                    EmptyQueue();
+                    SetWatcher();
+                }
+                else if (cbEnableDisable.Checked == true && cbCreating.Checked == false)
+                {
+                    watcher.Created -= Watcher_Created;
+                }
             }
-            else if (cbEnableDisable.Checked == true && cbCreating.Checked == false)
+            catch (Exception ex)
             {
-                watcher.Created -= Watcher_Created;
+                MessageBox.Show($"Greska: {ex.Message} - cbCreatingCheckChanged funkcija");
             }
         }
         public void cbDeletingCheckChanged() 
         {
-            if (cbEnableDisable.Checked == true && cbDeleting.Checked == true)
+            try
             {
-                EmptyQueue();
-                SetWatcher();
+                if (cbEnableDisable.Checked == true && cbDeleting.Checked == true)
+                {
+                    EmptyQueue();
+                    SetWatcher();
+                }
+                else if (cbEnableDisable.Checked == true && cbDeleting.Checked == false)
+                {
+                    watcher.Deleted -= Watcher_Deleted;
+                }
             }
-            else if (cbEnableDisable.Checked == true && cbDeleting.Checked == false)
+            catch (Exception ex)
             {
-                watcher.Deleted -= Watcher_Deleted;
+                MessageBox.Show($"Greska: {ex.Message} - cbDeletingCheckChanged funkcija");
             }
         }
         public void cbRenamingCheckChanged() 
         {
-            if (cbEnableDisable.Checked == true && cbRenaming.Checked == true)
+            try
             {
-                EmptyQueue();
-                SetWatcher();
+                if (cbEnableDisable.Checked == true && cbRenaming.Checked == true)
+                {
+                    EmptyQueue();
+                    SetWatcher();
+                }
+                else if (cbEnableDisable.Checked == true && cbRenaming.Checked == false)
+                {
+                    watcher.Renamed -= Watcher_ChangedFileName;
+                }
             }
-            else if (cbEnableDisable.Checked == true && cbRenaming.Checked == false)
+            catch (Exception ex)
             {
-                watcher.Renamed -= Watcher_ChangedFileName;
+                MessageBox.Show($"Greska: {ex.Message} - cbRenamingCheckChanged funkcija");
             }
         }
         public void CopyQueue()
         {
-            Queue<string> updatedQueue = new Queue<string>();
-
-            while (filesToUpload.Count > 0)
+            try
             {
-                string queuedFile = filesToUpload.Dequeue();
-                updatedQueue.Enqueue(queuedFile);
-            }
+                Queue<string> updatedQueue = new Queue<string>();
 
-            filesToUpload = updatedQueue;
-            ShowQueue();
+                while (filesToUpload.Count > 0)
+                {
+                    string queuedFile = filesToUpload.Dequeue();
+                    updatedQueue.Enqueue(queuedFile);
+                }
+
+                filesToUpload = updatedQueue;
+                ShowQueue();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greska: {ex.Message} - CopyQueue funkcija");
+            }
         }
         public void SetWatcher()
         {
-            watcher.Path = folderFSWPath1;
-
-            if (cbEnableDisable.Checked == true)
+            try
             {
-                watcher.Created -= Watcher_Created;
-                watcher.Renamed -= Watcher_ChangedFileName;
-                watcher.Deleted -= Watcher_Deleted;
+                watcher.Path = folderFSWPath1;
 
-                if (cbCreating.Checked == true)
-                    watcher.Created += Watcher_Created;
-                if (cbRenaming.Checked == true)
-                    watcher.Renamed += Watcher_ChangedFileName;
-                if (cbDeleting.Checked == true)
-                    watcher.Deleted += Watcher_Deleted;
+                if (cbEnableDisable.Checked == true)
+                {
+                    watcher.Created -= Watcher_Created;
+                    watcher.Renamed -= Watcher_ChangedFileName;
+                    watcher.Deleted -= Watcher_Deleted;
+
+                    if (cbCreating.Checked == true)
+                        watcher.Created += Watcher_Created;
+                    if (cbRenaming.Checked == true)
+                        watcher.Renamed += Watcher_ChangedFileName;
+                    if (cbDeleting.Checked == true)
+                        watcher.Deleted += Watcher_Deleted;
+                }
+
+                watcher.EnableRaisingEvents = true;
+
+                watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite;
+
+                FillQueue();
+                ShowQueue();
             }
-
-            watcher.EnableRaisingEvents = true;
-
-            watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite;
-
-            FillQueue();
-            ShowQueue();
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greska: {ex.Message} - SetWatcher funkcija");
+            }
         }
         public void FillQueue()
         {
-            string[] allFiles = Directory.GetFiles(folderFSWPath1);
-            foreach (var f in allFiles)
-                filesToUpload.Enqueue(f);
+            try
+            {
+                string[] allFiles = Directory.GetFiles(folderFSWPath1);
+                foreach (var f in allFiles)
+                    filesToUpload.Enqueue(f);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greska: {ex.Message} - FillQueue funkcija");
+            }
         }
         public void EmptyQueue()
         {
-            while (filesToUpload.Count > 0)
-                filesToUpload.Dequeue();
+            try
+            {
+                while (filesToUpload.Count > 0)
+                    filesToUpload.Dequeue();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greska: {ex.Message} - EmptyQueue funkcija");
+            }
         }
         public void ShowQueue()
         {
-            if (!uiControl.IsHandleCreated)
+            try
             {
-                return;
-            }
-
-            if (uiControl.InvokeRequired)
-            {
-                uiControl.Invoke(new Action(() => ShowQueue()));
-            }
-            else
-            {
-                if (lvCurrentFiles.Items.Count != 0)
+                if (!uiControl.IsHandleCreated)
                 {
-                    lvCurrentFiles.Invoke(new Action(() => lvCurrentFiles.Items.Clear()));
+                    return;
                 }
 
-                foreach (var fileName in filesToUpload)
+                if (uiControl.InvokeRequired)
                 {
-                    string[] name = fileName.Split('\\');
-                    lvCurrentFiles.Invoke(new Action(() => lvCurrentFiles.Items.Add(name.Last())));
+                    uiControl.Invoke(new Action(() => ShowQueue()));
                 }
+                else
+                {
+                    if (lvCurrentFiles.Items.Count != 0)
+                    {
+                        lvCurrentFiles.Invoke(new Action(() => lvCurrentFiles.Items.Clear()));
+                    }
+
+                    foreach (var fileName in filesToUpload)
+                    {
+                        string[] name = fileName.Split('\\');
+                        lvCurrentFiles.Invoke(new Action(() => lvCurrentFiles.Items.Add(name.Last())));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greska: {ex.Message} - ShowQueue funkcija");
             }
         }
         private void Watcher_Created(object sender, FileSystemEventArgs e)
         {
-            bool EncryptedDecrypted = true;
-            bool FSWActive = this.cbEnableDisable.Checked;
-            bool rbChecked;
-            bool extension;
-            string labelText = string.Empty;
-            string appLogText = string.Empty;
-            if (this.rbBifid.Checked == true)
-                rbChecked = false;
-            else
-                rbChecked = true;
-            FileInfo fileInfo = new FileInfo(e.FullPath);
-            while (!FileLoaded(fileInfo))
+            try
             {
-                Thread.Sleep(1000);
-            }
-            filesToUpload.Enqueue(e.FullPath);
-            ShowQueue();
+                bool EncryptedDecrypted = true;
+                bool FSWActive = this.cbEnableDisable.Checked;
+                bool rbChecked;
+                bool extension;
+                string labelText = string.Empty;
+                string appLogText = string.Empty;
+                if (this.rbBifid.Checked == true)
+                    rbChecked = false;
+                else
+                    rbChecked = true;
+                FileInfo fileInfo = new FileInfo(e.FullPath);
+                while (!FileLoaded(fileInfo))
+                {
+                    Thread.Sleep(1000);
+                }
+                filesToUpload.Enqueue(e.FullPath);
+                ShowQueue();
 
-            counter += 1;
-            lblNumber.Text = counter.ToString();
-            encryptionFunctionalities.HandleNewFile(e.FullPath, EncryptedDecrypted, null, rbChecked, FSWActive);
-            UpdateLabel(e.FullPath);
-            extension = globalFunctionalities.CheckExtension(e.FullPath, rbBifid);
-            if (rbBifid.Checked == true && extension == true)
-                labelText = $"File {e.FullPath} created and encrypted using Bifid cypher";
-            else if (rbBifid.Checked == true && extension == false)
-                labelText = $"File {e.FullPath} created but can not be encrypted using Bifid cypher because it is not txt file";
-            else
-                labelText = $"File {e.FullPath} created and encrypted using RC6 + OFB algorithm";
-            globalFunctionalities.FillTheLog(rtbAppLog, rcbLog, fileInfo.CreationTime.ToString(), $"Created file: {fileInfo.Name}", labelText,  true);
-            globalFunctionalities.SetLabelText(lblLastActivity, labelText);
+                counter += 1;
+                lblNumber.Text = counter.ToString();
+                encryptionFunctionalities.HandleNewFile(e.FullPath, EncryptedDecrypted, null, rbChecked, FSWActive);
+                UpdateLabel(e.FullPath);
+                extension = globalFunctionalities.CheckExtension(e.FullPath, rbBifid);
+                if (rbBifid.Checked == true && extension == true)
+                    labelText = $"Fajl {e.FullPath} kreiran i kriptovan koriscenjem Bifid cypher-a";
+                else if (rbBifid.Checked == true && extension == false)
+                    labelText = $"Fajl {e.FullPath} kreiran, ali ne moze biti sifrovan koriscenjem Bifid cypher-a zato sto nije txt fajl";
+                else
+                    labelText = $"Fajl {e.FullPath} kreiran i kriptovan koriscenjem RC6 + OFB algoritma";
+                globalFunctionalities.FillTheLog(rtbAppLog, rcbLog, null, fileInfo.CreationTime.ToString(), $"Kreiran fajl: {fileInfo.Name}", labelText, true, false);
+                globalFunctionalities.SetLabelText(lblLastActivity, labelText);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greska: {ex.Message} - Watcher_Created handler");
+            }
         }
         private void Watcher_ChangedFileName(object sender, RenamedEventArgs e)
         {
-            string oldfile = Path.GetFileName(e.OldFullPath);
-            string newfile = Path.GetFileName(e.FullPath);
-            string labelText = string.Empty;
-            DateTime currentTime = DateTime.Now;
-            string formattedTime = currentTime.ToString("HH:mm:ss");
-            Queue<string> updatedQueue = new Queue<string>();
-
-            while (filesToUpload.Count > 0)
+            try
             {
-                string queuedFile = filesToUpload.Dequeue();
-                if (Path.GetFileName(queuedFile) == oldfile)
+                string oldfile = Path.GetFileName(e.OldFullPath);
+                string newfile = Path.GetFileName(e.FullPath);
+                string labelText = string.Empty;
+                DateTime currentTime = DateTime.Now;
+                string formattedTime = currentTime.ToString("HH:mm:ss");
+                Queue<string> updatedQueue = new Queue<string>();
+
+                while (filesToUpload.Count > 0)
                 {
-                    updatedQueue.Enqueue(e.FullPath);
+                    string queuedFile = filesToUpload.Dequeue();
+                    if (Path.GetFileName(queuedFile) == oldfile)
+                    {
+                        updatedQueue.Enqueue(e.FullPath);
+                    }
+                    else
+                    {
+                        updatedQueue.Enqueue(queuedFile);
+                    }
                 }
-                else
-                {
-                    updatedQueue.Enqueue(queuedFile);
-                }
+
+                filesToUpload = updatedQueue;
+
+                ShowQueue();
+                counter += 1;
+                lblNumber.Text = counter.ToString();
+                labelText = $"Fajlu {oldfile} promenjeno ime u {newfile}";
+                globalFunctionalities.FillTheLog(rtbAppLog, rcbLog, null, formattedTime, $"Promenjeno ime fajla: iz {oldfile} u {newfile}", labelText, true, false);
+                globalFunctionalities.SetLabelText(lblLastActivity, labelText);
             }
-
-            filesToUpload = updatedQueue;
-
-            ShowQueue();
-            counter += 1;
-            lblNumber.Text = counter.ToString();
-            labelText = $"File {oldfile} changed name to {newfile}";
-            globalFunctionalities.FillTheLog(rtbAppLog, rcbLog, formattedTime, $"Changed file name: from {oldfile} to {newfile}", labelText, null, true);
-            globalFunctionalities.SetLabelText(lblLastActivity, labelText);
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greska: {ex.Message} - Watcher_ChangedFileName handler");
+            }
         }
         private void Watcher_Deleted(object sender, FileSystemEventArgs e)
         {
-            string file = Path.GetFileName(e.FullPath);
-            FileInfo fileInfo = new FileInfo(e.FullPath);
-            Queue<string> updatedQueue = new Queue<string>();
-            DateTime currentTime = DateTime.Now;
-            string formattedTime = currentTime.ToString("HH:mm:ss");
-            string labelText = string.Empty;
-
-            while (filesToUpload.Count > 0)
+            try
             {
-                string queuedFile = filesToUpload.Dequeue();
-                if (Path.GetFileName(queuedFile) != file)
+                string file = Path.GetFileName(e.FullPath);
+                FileInfo fileInfo = new FileInfo(e.FullPath);
+                Queue<string> updatedQueue = new Queue<string>();
+                DateTime currentTime = DateTime.Now;
+                string formattedTime = currentTime.ToString("HH:mm:ss");
+                string labelText = string.Empty;
+
+                while (filesToUpload.Count > 0)
                 {
-                    updatedQueue.Enqueue(queuedFile);
+                    string queuedFile = filesToUpload.Dequeue();
+                    if (Path.GetFileName(queuedFile) != file)
+                    {
+                        updatedQueue.Enqueue(queuedFile);
+                    }
                 }
+
+                filesToUpload = updatedQueue;
+
+                ShowQueue();
+                counter += 1;
+                lblNumber.Text = counter.ToString();
+                labelText = $"Fajl {e.FullPath} uklonjen iz podrazumevanog Target foldera, ili foldera koji ste sami odabrali";
+                globalFunctionalities.FillTheLog(rtbAppLog, rcbLog, null, formattedTime, $"Uklonjen fajl: {fileInfo.Name}", labelText, true, false);
+                globalFunctionalities.SetLabelText(lblLastActivity, labelText);
             }
-
-            filesToUpload = updatedQueue;
-
-            ShowQueue();
-            counter += 1;
-            lblNumber.Text = counter.ToString();
-            labelText = $"File {e.FullPath} was removed from the default Target folder, or folder of your choice";
-            globalFunctionalities.FillTheLog(rtbAppLog, rcbLog, formattedTime, $"Deleted file: {fileInfo.Name}", labelText, null, true);
-            globalFunctionalities.SetLabelText(lblLastActivity, labelText);
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greska: {ex.Message} - Watcher_Deleted handler");
+            }
         }
         private bool FileLoaded(FileInfo file)
         {
@@ -273,6 +357,7 @@
             }
             catch (IOException)
             {
+                MessageBox.Show($"Greska: FileLoaded funkcija");
                 return false;
             }
             finally

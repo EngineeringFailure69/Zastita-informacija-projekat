@@ -132,95 +132,112 @@
         }
         public string RC6OFBEncryptFile(string inputFile)
         {
-            byte[] fileContent = File.ReadAllBytes(inputFile);
-            int length = 16;
-            byte[] key = GenerateKeyAndIV(length);
-            byte[] IV = GenerateKeyAndIV(length);
-
-            uint[] expandedKey = KeyExpansion(key);
-            byte[] encryptedIV = RC6EncryptIV(IV, expandedKey);
-            byte[] encryptedText = Encrypt(fileContent, encryptedIV, expandedKey);
-
-            byte[] expandedKeyBytes = expandedKey.SelectMany(BitConverter.GetBytes).ToArray();
-            string expandedKeyBase64 = Convert.ToBase64String(expandedKeyBytes);
-
-            //string encryptedFile = folderFSWPath;
-            string encryptedFile = Path.Combine(folderFSWPath, Path.GetFileName(inputFile) + ".enc");
-
-            File.WriteAllLines(encryptedFile, new string[]
+            try
             {
+                byte[] fileContent = File.ReadAllBytes(inputFile);
+                int length = 16;
+                byte[] key = GenerateKeyAndIV(length);
+                byte[] IV = GenerateKeyAndIV(length);
+
+                uint[] expandedKey = KeyExpansion(key);
+                byte[] encryptedIV = RC6EncryptIV(IV, expandedKey);
+                byte[] encryptedText = Encrypt(fileContent, encryptedIV, expandedKey);
+
+                byte[] expandedKeyBytes = expandedKey.SelectMany(BitConverter.GetBytes).ToArray();
+                string expandedKeyBase64 = Convert.ToBase64String(expandedKeyBytes);
+
+                string encryptedFile = Path.Combine(folderFSWPath, Path.GetFileName(inputFile) + ".enc");
+
+                File.WriteAllLines(encryptedFile, new string[]
+                {
                 expandedKeyBase64,
                 Convert.ToBase64String(encryptedIV),
                 Convert.ToBase64String(encryptedText)
-            });
+                });
 
-            MessageBox.Show($"Fajl {inputFile} je šifrovan kao {encryptedFile}.");
-            return encryptedFile;
+                MessageBox.Show($"Fajl {inputFile} je šifrovan kao {encryptedFile}.");
+                return encryptedFile;
+            }
+            catch (Exception ex) 
+            {
+                MessageBox.Show($"Greska: {ex.Message} - RC6OFBEncryptFile funkcija");
+                return null;
+            }
         }
         public void RC6OFBDecryptFile(string encryptedFile, string savePath)
         {
-            string[] lines = File.ReadAllLines(encryptedFile);
-            if (lines.Length < 3)
-                throw new Exception("Neispravan format šifrovanog fajla.");
+            try
+            {
+                string[] lines = File.ReadAllLines(encryptedFile);
+                if (lines.Length < 3)
+                    throw new Exception("Neispravan format šifrovanog fajla.");
 
-            byte[] expandedKeyBytes = Convert.FromBase64String(lines[0]);
-            uint[] expandedKey = new uint[expandedKeyBytes.Length / 4];
-            Buffer.BlockCopy(expandedKeyBytes, 0, expandedKey, 0, expandedKeyBytes.Length);
+                byte[] expandedKeyBytes = Convert.FromBase64String(lines[0]);
+                uint[] expandedKey = new uint[expandedKeyBytes.Length / 4];
+                Buffer.BlockCopy(expandedKeyBytes, 0, expandedKey, 0, expandedKeyBytes.Length);
 
-            byte[] encryptedIV = Convert.FromBase64String(lines[1]);
-            byte[] encryptedText = Convert.FromBase64String(lines[2]);
-            byte[] decryptedText = Decrypt(encryptedText, encryptedIV, expandedKey);
+                byte[] encryptedIV = Convert.FromBase64String(lines[1]);
+                byte[] encryptedText = Convert.FromBase64String(lines[2]);
+                byte[] decryptedText = Decrypt(encryptedText, encryptedIV, expandedKey);
 
-            //Skidam ekstenziju
-            string originalFileName = Path.GetFileNameWithoutExtension(encryptedFile);
-            string origExtension = Path.GetExtension(originalFileName);
-            //string decryptedFile = Path.Combine(savePath, originalFileName);
-            string decryptedFile = savePath + origExtension;
+                //Skidam ekstenziju
+                string originalFileName = Path.GetFileNameWithoutExtension(encryptedFile);
+                string origExtension = Path.GetExtension(originalFileName);
+                string decryptedFile = savePath + origExtension;
 
-            File.WriteAllBytes(decryptedFile, decryptedText);
+                File.WriteAllBytes(decryptedFile, decryptedText);
 
-            MessageBox.Show($"Fajl {encryptedFile} je dešifrovan u {decryptedFile}");
+                MessageBox.Show($"Fajl {encryptedFile} je dešifrovan u {decryptedFile}");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greska: {ex.Message} - RC6OFBDecryptFile funkcija");
+            }
         }
         public void EncryptDecryptRC6(string filePath, bool EncryptDecrypt, string? savePath, bool? FSWActive)
         {
-            MessageBox.Show($"New file detected, path to it: {filePath}");
-            MessageBox.Show("EncryptDecrypt = " + EncryptDecrypt.ToString());
-            string decryptPath = string.Empty;
-            if (EncryptDecrypt == true && FSWActive == false)
+            try
             {
-                Task task = Task.Run(() =>
-                {
-                    MessageBox.Show("Encryption started");
-                    decryptPath = RC6OFBEncryptFile(filePath);
-                    MessageBox.Show($"New file to decrypt: {decryptPath}");
-                });
-                //decryptPath = RC6OFBEncryptFile(filePath);
-                //MessageBox.Show($"New file to decrypt: {decryptPath}");
-            }
-            else if (EncryptDecrypt == false && FSWActive == false)
-                if (string.IsNullOrEmpty(savePath))
-                    MessageBox.Show("Niste odabrali mesto gde ce se fajl sacuvati nakon dekripcije");
-                else
+                MessageBox.Show($"Novi fajl detektovan, putanja: {filePath}");
+                MessageBox.Show("EncryptDecrypt = " + EncryptDecrypt.ToString());
+                string decryptPath = string.Empty;
+                if (EncryptDecrypt == true && FSWActive == false)
                 {
                     Task task = Task.Run(() =>
                     {
-                        RC6OFBDecryptFile(filePath, savePath);
-                        MessageBox.Show("Decryption over");
+                        MessageBox.Show("Enkripcija pokrenuta");
+                        decryptPath = RC6OFBEncryptFile(filePath);
+                        MessageBox.Show($"Novi fajl za dekriptovanje: {decryptPath}");
                     });
                 }
-            // RC6OFBDecryptFile(filePath, savePath);
-            else if (FSWActive == true && EncryptDecrypt == true)
-            {
-                Task task = Task.Run(() =>
+                else if (EncryptDecrypt == false && FSWActive == false)
+                    if (string.IsNullOrEmpty(savePath))
+                        MessageBox.Show("Niste odabrali mesto gde ce se fajl sacuvati nakon dekripcije");
+                    else
+                    {
+                        Task task = Task.Run(() =>
+                        {
+                            RC6OFBDecryptFile(filePath, savePath);
+                            MessageBox.Show("Dekripcija zavrsena");
+                        });
+                    }
+                else if (FSWActive == true && EncryptDecrypt == true)
                 {
-                    MessageBox.Show("Encryption started");
-                    decryptPath = RC6OFBEncryptFile(filePath);
-                    MessageBox.Show($"New file to decrypt: {decryptPath}");
-                });
+                    Task task = Task.Run(() =>
+                    {
+                        MessageBox.Show("Enkripcija pokrenuta");
+                        decryptPath = RC6OFBEncryptFile(filePath);
+                        MessageBox.Show($"Novi fajl za dekriptovanje: {decryptPath}");
+                    });
+                }
+                else
+                {
+                    MessageBox.Show("Greska prilikom enkripcije ili dekripcije RC6");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Greska prilikom enkripcije ili dekripcije RC6");
+                MessageBox.Show($"Greska: {ex.Message} - EncryptDecryptRC6 funkcija");
             }
         }
         #endregion

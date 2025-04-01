@@ -6,17 +6,23 @@
         private Bifid bifid = new Bifid();
         private SHA_1 sha1 = new SHA_1();
 
+        GlobalFunctionalities globalFunctionalities = new GlobalFunctionalities();
+
         private Socket serverSocket;
-        Main mainForm;
-        RadioButton rbBifid;
-        TextBox tbIPAddress;
-        TextBox tbPort;
-        Label lblClientStatus;
-        Label lblServerStatus;
+        private Main mainForm;
+        private RadioButton rbBifid;
+        private TextBox tbIPAddress;
+        private TextBox tbPort;
+        private Label lblClientStatus;
+        private Label lblServerStatus;
         private Control uiControl;
+        private RichTextBox rtbClientSettings;
+        private RichTextBox rtbServerSettings;
+        private RichTextBox rtbAppLog;
 
         public TCPFunctionalities(Main mainForm, RadioButton rbBifid, TextBox tbIPAddress, 
-            TextBox tbPort, Label lblClientStatus, Label lblServerStatus, Control uiControl, Socket serverSocket) 
+            TextBox tbPort, Label lblClientStatus, Label lblServerStatus, Control uiControl, Socket serverSocket, 
+            RichTextBox rtbClientSettings, RichTextBox rtbAppLog, RichTextBox rtbServerSettings) 
         {
             this.mainForm = mainForm;
             this.rbBifid = rbBifid;
@@ -26,6 +32,9 @@
             this.lblServerStatus = lblServerStatus;
             this.uiControl = uiControl;
             this.serverSocket = serverSocket;
+            this.rtbClientSettings = rtbClientSettings;
+            this.rtbAppLog = rtbAppLog;
+            this.rtbServerSettings = rtbServerSettings;
         }
 
         public async Task AdvanceKlijent(string selectedFilePath)
@@ -73,16 +82,18 @@
                             }
                         }
 
+                        globalFunctionalities.FillTheLog(rtbAppLog, null, rtbClientSettings, null, $"Fajl {filePath} poslat", null, false, true);
                         //Odgovor servera
                         string response = reader.ReadString();
                         File.Delete(filePath);
-                        UpdateStatus(lblClientStatus, $"Server response: {response}");
+                        UpdateStatus(lblClientStatus, $"Odgovor servera: {response}");
+                        globalFunctionalities.FillTheLog(rtbAppLog, null, rtbClientSettings, null, $"Odgovor servera: {response}", null, false, true);
                     }
                 }
             }
             catch (Exception ex)
             {
-                UpdateStatus(lblClientStatus, $"Error: {ex.Message}");
+                UpdateStatus(lblClientStatus, $"Greska: {ex.Message} - AdvanceKlijent funkcija");
             }
         }
         public async Task AdvanceServer()
@@ -94,6 +105,7 @@
                 serverSocket.Bind(new IPEndPoint(IPAddress.Any, Int32.Parse(this.tbPort.Text)));
                 serverSocket.Listen(5);
                 UpdateStatus(lblServerStatus, "Server je spreman i osluškuje konekcije");
+                globalFunctionalities.FillTheLog(rtbAppLog, null, rtbServerSettings, null, "Server je spreman i osluškuje konekcije", null, false, true);
 
                 while (true)
                 {
@@ -103,7 +115,9 @@
             }
             catch (Exception ex)
             {
-                UpdateStatus(lblServerStatus, $"Error: {ex.Message}");
+                UpdateStatus(lblServerStatus, $"Greska: {ex.Message} - AdvanceServer funkcija");
+                globalFunctionalities.FillTheLog(rtbAppLog, null, rtbServerSettings, null, $"Greska: {ex.Message}", null, false, true);
+
             }
             finally
             {
@@ -124,6 +138,7 @@
                     byte[] expectedHash = reader.ReadBytes(hashLength);
 
                     UpdateStatus(lblServerStatus, $"Preuzimanje i provera fajla: {fileName} ({fileSize} bytes)");
+                    globalFunctionalities.FillTheLog(rtbAppLog, null, rtbServerSettings, null, $"Preuzimanje i provera fajla: {fileName} ({fileSize} bytes)", null, false, true);
 
                     using (MemoryStream memoryStream = new MemoryStream())
                     {
@@ -143,6 +158,7 @@
                         {
                             UpdateStatus(lblServerStatus, "Greska: velicina primljenog fajla ne odgovara ocekivanoj");
                             writer.Write("Fajl nije uspesno preuzet: neodgovarajuća velicina");
+                            globalFunctionalities.FillTheLog(rtbAppLog, null, rtbServerSettings, null, $"Greska: velicina primljenog fajla: {fileName} ne odgovara ocekivanoj", null, false, true);
                             return;
                         }
 
@@ -153,6 +169,7 @@
                         {
                             UpdateStatus(lblServerStatus, "Greska: hash vrednosti se ne poklapaju");
                             writer.Write("Fajl nije uspesno preuzet: hash vrednosti se ne poklapaju");
+                            globalFunctionalities.FillTheLog(rtbAppLog, null, rtbServerSettings, null, $"Greska: Fajl {fileName} nije uspesno preuzet: hash vrednosti se ne poklapaju", null, false, true);
                             return;
                         }
 
@@ -161,12 +178,15 @@
 
                         UpdateStatus(lblServerStatus, $"Fajl {fileName} uspešno preuzet i verifikovan");
                         writer.Write("Fajl je uspešno preuzet i verifikovan");
+                        globalFunctionalities.FillTheLog(rtbAppLog, null, rtbServerSettings, null, $"Fajl {fileName} uspešno preuzet i verifikovan", null, false, true);
                     }
                 }
             }
             catch (Exception ex)
             {
-                UpdateStatus(lblServerStatus, $"Error handling client: {ex.Message}");
+                UpdateStatus(lblServerStatus, $"Greska: {ex.Message} - HandleClientAsyncAdvance funkcija");
+                globalFunctionalities.FillTheLog(rtbAppLog, null, rtbServerSettings, null, $"Error handling client: {ex.Message}", null, false, true);
+
             }
             finally
             {
@@ -175,13 +195,20 @@
         }
         public void UpdateStatus(Label statusLabel, string message)
         {
-            if (uiControl.InvokeRequired)
+            try
             {
-                uiControl.Invoke(new Action(() => statusLabel.Text = message));
+                if (uiControl.InvokeRequired)
+                {
+                    uiControl.Invoke(new Action(() => statusLabel.Text = message));
+                }
+                else
+                {
+                    statusLabel.Text = message;
+                }
             }
-            else
+            catch (Exception ex) 
             {
-                statusLabel.Text = message;
+                MessageBox.Show($"Greska: {ex.Message} - UpdateStatus funkcija");
             }
         }
     }
