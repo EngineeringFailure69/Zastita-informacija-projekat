@@ -57,7 +57,7 @@
         public byte[] RC6EncryptIV(byte[] block, uint[] S)
         {
             if (block.Length != 16)
-                throw new ArgumentException("Block mora biti tačno 16 bajtova!");
+                throw new ArgumentException("Block mora biti tacno 16 bajtova!");
 
             uint A = BitConverter.ToUInt32(block, 0);
             uint B = BitConverter.ToUInt32(block, 4);
@@ -155,7 +155,7 @@
                 Convert.ToBase64String(encryptedText)
                 });
 
-                MessageBox.Show($"Fajl {inputFile} je šifrovan kao {encryptedFile}.");
+                MessageBox.Show($"Fajl {inputFile} je sifrovan kao {encryptedFile}.");
                 return encryptedFile;
             }
             catch (Exception ex) 
@@ -170,7 +170,7 @@
             {
                 string[] lines = File.ReadAllLines(encryptedFile);
                 if (lines.Length < 3)
-                    throw new Exception("Neispravan format šifrovanog fajla.");
+                    throw new Exception("Neispravan format sifrovanog fajla.");
 
                 byte[] expandedKeyBytes = Convert.FromBase64String(lines[0]);
                 uint[] expandedKey = new uint[expandedKeyBytes.Length / 4];
@@ -187,7 +187,7 @@
 
                 File.WriteAllBytes(decryptedFile, decryptedText);
 
-                MessageBox.Show($"Fajl {encryptedFile} je dešifrovan u {decryptedFile}");
+                MessageBox.Show($"Fajl {encryptedFile} je desifrovan u {decryptedFile}");
             }
             catch (Exception ex)
             {

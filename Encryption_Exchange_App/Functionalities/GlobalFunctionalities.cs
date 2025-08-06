@@ -122,7 +122,7 @@
                 using (SaveFileDialog sfd = new SaveFileDialog())
                 {
                     string savePath = string.Empty;
-                    sfd.Title = "Sačuvaj dekriptovani fajl kao";
+                    sfd.Title = "Sacuvaj dekriptovani fajl kao";
                     sfd.Filter = "All files (*.*)|*.*";
                     sfd.FileName = Path.GetFileNameWithoutExtension(selectedFile);
 

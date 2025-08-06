@@ -104,8 +104,8 @@
             {
                 serverSocket.Bind(new IPEndPoint(IPAddress.Any, Int32.Parse(this.tbPort.Text)));
                 serverSocket.Listen(5);
-                UpdateStatus(lblServerStatus, "Server je spreman i osluškuje konekcije");
-                globalFunctionalities.FillTheLog(rtbAppLog, null, rtbServerSettings, null, "Server je spreman i osluškuje konekcije", null, false, true);
+                UpdateStatus(lblServerStatus, "Server je spreman i osluskuje konekcije");
+                globalFunctionalities.FillTheLog(rtbAppLog, null, rtbServerSettings, null, "Server je spreman i osluskuje konekcije", null, false, true);
 
                 while (true)
                 {
@@ -176,16 +176,16 @@
                         string savePath = Path.Combine(Directory.GetCurrentDirectory(), "Received_" + fileName);
                         File.WriteAllBytes(savePath, receivedData);
 
-                        UpdateStatus(lblServerStatus, $"Fajl {fileName} uspešno preuzet i verifikovan");
-                        writer.Write("Fajl je uspešno preuzet i verifikovan");
-                        globalFunctionalities.FillTheLog(rtbAppLog, null, rtbServerSettings, null, $"Fajl {fileName} uspešno preuzet i verifikovan", null, false, true);
+                        UpdateStatus(lblServerStatus, $"Fajl {fileName} uspesno preuzet i verifikovan");
+                        writer.Write("Fajl je uspesno preuzet i verifikovan");
+                        globalFunctionalities.FillTheLog(rtbAppLog, null, rtbServerSettings, null, $"Fajl {fileName} uspesno preuzet i verifikovan", null, false, true);
                     }
                 }
             }
             catch (Exception ex)
             {
                 UpdateStatus(lblServerStatus, $"Greska: {ex.Message} - HandleClientAsyncAdvance funkcija");
-                globalFunctionalities.FillTheLog(rtbAppLog, null, rtbServerSettings, null, $"Error handling client: {ex.Message}", null, false, true);
+                globalFunctionalities.FillTheLog(rtbAppLog, null, rtbServerSettings, null, $"Greska pri radu sa klijentom: {ex.Message}", null, false, true);
 
             }
             finally

@@ -54,11 +54,11 @@
 
             byteArray = extendedInput.ToArray();
 
-            //Delim na 512-bitne blokove, odnosno, 64-batjtne blokove (64 * 8 = 512)
+            //Delim na 512-bitne blokove, odnosno, 64-bajtne blokove (64 * 8 = 512)
             for (int i = 0; i < byteArray.Length; i += 64)
             {
                 uint[] w = new uint[80];
-                //Delima na 16 32-bitnih reci
+                //Delim na 16 32-bitnih reci
                 for (int j = 0; j < 16; j++)
                 {
                     int index = i + j * 4;  // i - pocetni indeks u trenutnom 512-bitnom bloku, j * 4 pomera indeks za 4 bajta na svaku sledecu rec, 4*8=3

@@ -183,7 +183,7 @@
                 string encryptedFile = Path.Combine(folderFSWPath, Path.GetFileName(inputFile) + ".enc");
                 File.WriteAllText(encryptedFile, squareString + Environment.NewLine + encryptedIndices + Environment.NewLine + encryptedText);
 
-                MessageBox.Show($"Fajl {inputFile} je šifrovan kao {encryptedFile}");
+                MessageBox.Show($"Fajl {inputFile} je sifrovan kao {encryptedFile}");
                 return encryptedFile;
             }
             catch (Exception ex) 
@@ -213,7 +213,7 @@
                     }
                     else
                     {
-                        MessageBox.Show($"Neispravan broj u šifrovanom indeksu: {numStr}", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($"Neispravan broj u sifrovanom indeksu: {numStr}", "Greska", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
                 }
@@ -226,11 +226,11 @@
 
                 File.WriteAllText(decryptedFile, decryptedText);
 
-                MessageBox.Show($"Fajl {encryptedFile} je dešifrovan u {decryptedFile}");
+                MessageBox.Show($"Fajl {encryptedFile} je desifrovan u {decryptedFile}");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Došlo je do greške: {ex.Message}\n{ex.StackTrace}", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Doslo je do greske: {ex.Message}\n{ex.StackTrace}", "Greska", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private char[,] ConvertStringToSquare(string squareString)

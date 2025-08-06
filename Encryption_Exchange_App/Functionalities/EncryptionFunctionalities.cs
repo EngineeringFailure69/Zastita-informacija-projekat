@@ -288,7 +288,7 @@
                 }
                 else
                 {
-                    MessageBox.Show("FSW mora biti isključen");
+                    MessageBox.Show("FSW mora biti iskljucen");
                 }
             }
             catch (Exception ex)
