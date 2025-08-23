@@ -45,7 +45,7 @@
                 Array.Reverse(lengthBytes);
             }
 
-            // Dodajte bajtove u listu
+            // Dodajem bajtove u listu
             extendedInput.AddRange(lengthBytes);
 
             #endregion

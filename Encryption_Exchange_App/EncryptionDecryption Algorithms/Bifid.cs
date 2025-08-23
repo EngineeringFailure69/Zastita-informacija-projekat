@@ -159,7 +159,7 @@
             {
                 string fileContent = string.Empty;
                 string extension = Path.GetExtension(inputFile);
-                if (extension == ".txt" || extension == ".html") //ako je fajl txt
+                if (extension == ".txt") //ako je fajl txt
                 {
                     fileContent = File.ReadAllText(inputFile);
                 }
@@ -245,22 +245,6 @@
                 }
             }
             return square;
-        }
-        public void PrintSquare(char[,] square)
-        {
-            int size = square.GetLength(0);
-            string output = "Kvadrat:\n";
-
-            for (int i = 0; i < size; i++)
-            {
-                for (int j = 0; j < size; j++)
-                {
-                    output += square[i, j] + " ";
-                }
-                output += "\n";
-            }
-
-            MessageBox.Show(output, "Provera kvadrata");
         }
         private string ConvertSquareToString(char[,] square)
         {

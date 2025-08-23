@@ -100,7 +100,7 @@
         public bool CheckExtension(string inputFile, RadioButton rbBifid)
         {
             string extension = Path.GetExtension(inputFile);
-            if ((extension == ".txt" || extension == ".html") && rbBifid.Checked == true) //ako je fajl txt
+            if ((extension == ".txt") && rbBifid.Checked == true) //ako je fajl txt
             {
                 return true;
             }
@@ -109,7 +109,7 @@
                 return false;
             }
         }
-        public string ReturnTime() 
+        public string ReturnTime()
         {
             DateTime currentTime = DateTime.Now;
             string formattedTime = currentTime.ToString("HH:mm:ss");

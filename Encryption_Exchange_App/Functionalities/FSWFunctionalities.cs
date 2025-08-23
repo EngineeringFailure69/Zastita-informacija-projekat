@@ -370,7 +370,7 @@
         public void UpdateLabel(string inputFile) 
         {
             string extension = Path.GetExtension(inputFile);
-            if ((extension == ".txt" || extension == ".html") && rbBifid.Checked == true) //ako je fajl txt
+            if ((extension == ".txt") && rbBifid.Checked == true) //ako je fajl txt
             {
                 encryptionCouter += 1;
                 lblNumberOfEncryptedFiles.Text = encryptionCouter.ToString();
@@ -382,7 +382,6 @@
             }
             else //ako nije txt
             {
-                MessageBox.Show("FSW test labela update");
             }
         }
     }

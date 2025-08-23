@@ -57,7 +57,7 @@
         public byte[] RC6EncryptIV(byte[] block, uint[] S)
         {
             if (block.Length != 16)
-                throw new ArgumentException("Block mora biti tacno 16 bajtova!");
+                throw new ArgumentException("Blok mora biti tacno 16 bajtova!");
 
             uint A = BitConverter.ToUInt32(block, 0);
             uint B = BitConverter.ToUInt32(block, 4);
@@ -198,8 +198,6 @@
         {
             try
             {
-                MessageBox.Show($"Novi fajl detektovan, putanja: {filePath}");
-                MessageBox.Show("EncryptDecrypt = " + EncryptDecrypt.ToString());
                 string decryptPath = string.Empty;
                 if (EncryptDecrypt == true && FSWActive == false)
                 {

@@ -57,7 +57,6 @@
                     using (BinaryReader reader = new BinaryReader(networkStream))
                     using (BinaryWriter writer = new BinaryWriter(networkStream))
                     {
-                        //string filePath = this.lblChosenFile.Text;  //vrati
                         string filePath = fileToSend; //dodato
                         string fileName = Path.GetFileName(filePath);
                         long fileSize = new FileInfo(filePath).Length;

@@ -51,7 +51,6 @@
             {
 
                 MessageBox.Show($"Novi fajl detektovan, putanja: {filePath}");
-                MessageBox.Show("EncryptDecrypt = " + EncryptDecrypt.ToString());
                 string decryptPath = string.Empty;
                 if (EncryptDecrypt == true && FSWActive == false)
                 {
@@ -101,7 +100,6 @@
             try
             {
                 MessageBox.Show($"Novi fajl detektovan, putanja: {filePath}");
-                MessageBox.Show("EncryptDecrypt = " + EncryptDecrypt.ToString());
                 string decryptPath = string.Empty;
                 if (EncryptDecrypt == true && FSWActive == false)
                 {
